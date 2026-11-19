@@ -1,0 +1,6 @@
+{
+  "name": "Bìa Quy hoạch TP.HCM 1920×1080",
+  "description": "Bìa website kích thước chuẩn 1920×1080 với hiệu ứng đường sáng chuyển động Xa lộ Hà Nội và tuyến Metro số 1 trên nền Quy hoạch tổng thể TP.HCM giai đoạn 2025–2050, tầm nhìn 100 năm.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

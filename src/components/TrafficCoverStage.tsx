@@ -224,7 +224,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
           ref={canvasRef}
           width={CANVAS_WIDTH}
           height={CANVAS_HEIGHT}
-          className="block w-full h-full object-contain"
+          className="block w-full h-full object-cover"
           aria-label="Bìa website Quy hoạch tổng thể TP.HCM giai đoạn 2025-2050 kích thước 1920 nhân 1080 với đường sáng mảnh chuyển động và tiêu đề Định hình siêu đô thị toàn cầu, lấy con người làm trung tâm"
         />
 

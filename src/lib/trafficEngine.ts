@@ -79,18 +79,19 @@ const METRO_VIADUCT: RoadSample[] = [
 ];
 
 const HEADLINE_LINES = [
-  { text: 'ĐỊNH HÌNH SIÊU ĐÔ THỊ TOÀN CẦU,', baseY: 214, startDelay: 0.05 },
-  { text: 'LẤY CON NGƯỜI LÀM', baseY: 316, startDelay: 0.21 },
-  { text: 'TRUNG TÂM', baseY: 418, startDelay: 0.37 },
+  { text: 'ĐỊNH HÌNH SIÊU ĐÔ THỊ TOÀN CẦU,', baseY: 204, startDelay: 0.05 },
+  { text: 'LẤY CON NGƯỜI LÀM', baseY: 306, startDelay: 0.21 },
+  { text: 'TRUNG TÂM', baseY: 408, startDelay: 0.37 },
 ];
 
 const HEADLINE_CYCLE_SEC = 5.5;
 
 // Sky polygon above the HCMC skyline & foreground towers (measured pixel-for-pixel at 1920x1080)
+// Left roof clearance sits cleanly at y=244..255 so dấu nặng dots under Line 1 (baseY=204) are 100% full & unclipped
 const SKYLINE_CLIP_POINTS: Array<[number, number]> = [
   [0, 0],
   [1920, 0],
-  [1920, 220],
+  [1920, 236],
   [1362, 258],
   [1318, 264],
   [1318, 336],
@@ -119,10 +120,10 @@ const SKYLINE_CLIP_POINTS: Array<[number, number]> = [
   [567, 298],
   [567, 286],
   [520, 255],
-  [480, 226],
-  [310, 226],
-  [150, 236],
-  [0, 236],
+  [480, 244],
+  [310, 244],
+  [150, 244],
+  [0, 244],
 ];
 
 type CorridorId = 'leftMain' | 'rightMain' | 'leftFrontage' | 'rightFrontage' | 'metro';
@@ -331,8 +332,8 @@ export class TrafficEngine {
     if (typeof document === 'undefined') return;
     const dpr = 2;
     const logicalW = 1600;
-    const logicalH = 164;
-    const baselineOffsetY = 120;
+    const logicalH = 188;
+    const baselineOffsetY = 124;
 
     this.headlineSprites = HEADLINE_LINES.map((line) => {
       const off = document.createElement('canvas');
@@ -350,17 +351,25 @@ export class TrafficEngine {
           octxWithSpacing.letterSpacing = '1.8px';
         }
 
-        octx.shadowColor = 'rgba(118, 62, 12, 0.32)';
-        octx.shadowBlur = 18;
+        // Crisp dark-warm shadow makes both stems and below-baseline dấu nặng dots pop cleanly
+        octx.shadowColor = 'rgba(92, 46, 10, 0.42)';
+        octx.shadowBlur = 16;
         octx.shadowOffsetX = 0;
-        octx.shadowOffsetY = 4;
+        octx.shadowOffsetY = 3;
 
-        const textGrad = octx.createLinearGradient(0, baselineOffsetY - 90, 0, baselineOffsetY + 10);
+        const textGrad = octx.createLinearGradient(0, baselineOffsetY - 92, 0, baselineOffsetY + 32);
         textGrad.addColorStop(0, '#FFFFFF');
-        textGrad.addColorStop(0.75, '#FFFDF9');
-        textGrad.addColorStop(1, '#FFF4E0');
+        textGrad.addColorStop(0.85, '#FFFFFF');
+        textGrad.addColorStop(1, '#FFF9ED');
 
         octx.fillStyle = textGrad;
+        octx.fillText(line.text, logicalW / 2, baselineOffsetY);
+
+        // Subtle second solid crisp pass with zero blur to give dấu nặng & fine diacritics razor sharpness
+        octx.shadowColor = 'transparent';
+        octx.shadowBlur = 0;
+        octx.shadowOffsetY = 0;
+        octx.fillStyle = '#FFFFFF';
         octx.fillText(line.text, logicalW / 2, baselineOffsetY);
       }
       return { canvas: off, logicalW, logicalH, baselineOffsetY };
@@ -937,10 +946,10 @@ export class TrafficEngine {
 
       if (alpha <= 0.004) continue;
 
-      // Per-line horizontal reveal band wide enough for "ĐỊNH HÌNH SIÊU ĐÔ THỊ TOÀN CẦU,"
+      // Per-line horizontal reveal band with generous bottom clearance (+38px) for dấu nặng dots
       ctx.save();
-      const bandTop = line.baseY - 122;
-      const bandBottom = line.baseY + 28;
+      const bandTop = line.baseY - 120;
+      const bandBottom = line.baseY + 38;
       ctx.beginPath();
       ctx.rect(140, bandTop, 1640, bandBottom - bandTop);
       ctx.clip();

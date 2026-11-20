@@ -507,23 +507,24 @@ export class TrafficEngine {
       upperH
     );
 
-    // B. Permanent sky restoration for the "dấu nặng" dot under "Ị" (x=602..678, y=398..414)
+    // B. Permanent sky restoration strictly for the "dấu nặng" dot under "Ị" (x=622..653, y=377..412)
+    // Kept strictly left of x=658 so the "dấu huyền" on "À" in "TOÀN" (x=666..678, y=406..414) is 100% untouched
     ctx.drawImage(
       skyPatch,
-      602 - SKY_PATCH_X,
+      618 - SKY_PATCH_X,
       398 - SKY_PATCH_Y,
-      76,
-      16,
-      602,
+      40,
+      17,
+      618,
       398,
-      76,
-      16
+      40,
+      17
     );
 
-    // C. During the first 0.55s of the 5s loop, erase the 34px bottom edge (y=398..432) of the red sweep bar
-    // while keeping 100% of the expanding lime-green "LẤY CON NGƯỜI" bar untouched
+    // C. During the first 0.49s of the 5s loop (red sweep finishes at 0.44s; "SIÊU ĐÔ THỊ TOÀN CẦU," starts at 0.57s),
+    // erase the 34px bottom edge (y=398..432) of the red sweep bar while keeping "LẤY CON NGƯỜI" untouched
     const vt = videoEl ? videoEl.currentTime : 1;
-    if (vt < 0.55) {
+    if (vt < 0.49) {
       // Left half (x=188..950): "SIÊU ĐÔ THỊ TOÀN CẦU," hasn't appeared yet (starts at 0.57s)
       const leftW = 950 - SKY_PATCH_X;
       ctx.drawImage(
@@ -622,20 +623,20 @@ export class TrafficEngine {
     const alpha = clamp(rawProgress / 0.26, 0, 1);
 
     // Razor-straight architectural emergence line at y=396 (cleanly above "SIÊU ĐÔ THỊ TOÀN CẦU," & "LẤY CON NGƯỜI").
-    // Once letters rise above y=396 (offsetY < 34), smoothly open the small column under "Ị" (x=608..672) to y=414
-    // so the round "dấu nặng" dot lands 100% full and unclipped.
+    // Once letters rise above y=396 (offsetY < 34), smoothly open the narrow column under "Ị" (x=614..660) to y=416
+    // so the round "dấu nặng" dot (x=622..653) lands 100% full while staying clear of "À" in "TOÀN" (x=666..678).
     const dotReveal = clamp((34 - offsetY) / 24, 0, 1);
-    const dotBottomY = lerp(396, 414, dotReveal);
+    const dotBottomY = lerp(396, 416, dotReveal);
 
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(460, 158);
     ctx.lineTo(1460, 158);
     ctx.lineTo(1460, 396);
-    ctx.lineTo(672, 396);
-    ctx.lineTo(672, dotBottomY);
-    ctx.lineTo(608, dotBottomY);
-    ctx.lineTo(608, 396);
+    ctx.lineTo(660, 396);
+    ctx.lineTo(660, dotBottomY);
+    ctx.lineTo(614, dotBottomY);
+    ctx.lineTo(614, 396);
     ctx.lineTo(460, 396);
     ctx.closePath();
     ctx.clip();

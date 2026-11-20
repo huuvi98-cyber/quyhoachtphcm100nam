@@ -58,10 +58,10 @@ export function CityTriptychGallery() {
   return (
     <section
       aria-label="Bộ ảnh không gian đô thị TP.HCM"
-      className="w-full mt-8 md:mt-12 lg:mt-14 py-6 sm:py-10 md:py-14"
+      className="w-full mt-6 md:mt-8 lg:mt-10 py-4 sm:py-6 md:py-8"
     >
-      {/* Unified full-bleed 1200x640 aspect stage keeps all 3 slanted frames mathematically parallel edge-to-edge */}
-      <div className="relative w-full aspect-[1200/640] select-none">
+      {/* Scaled down 40% (60% width centered) while keeping all 3 slanted frames mathematically parallel */}
+      <div className="relative w-[60%] min-w-[300px] mx-auto aspect-[1200/640] select-none">
         {/* Background & corner geometric accents aligned strictly to the exact 11.86° slope (dy/dx = 0.21) */}
         <svg
           viewBox="0 0 1200 640"

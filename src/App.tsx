@@ -1,3 +1,4 @@
+import { CityTriptychGallery } from './components/CityTriptychGallery';
 import { SkylinePillarsIcon } from './components/SkylinePillarsIcon';
 import { TrafficCoverStage } from './components/TrafficCoverStage';
 import { TrafficConfig } from './lib/trafficEngine';
@@ -17,7 +18,7 @@ const COVER_CONFIG: TrafficConfig = {
 
 export default function App() {
   return (
-    <main className="w-full min-h-screen bg-[#0D5CB6] flex flex-col items-center justify-start pt-5 pb-12 md:pt-6 md:pb-16 lg:pt-8 lg:pb-20 overflow-x-hidden">
+    <main className="w-full min-h-screen bg-[#0D5CB6] flex flex-col items-center justify-start pt-5 pb-14 md:pt-6 md:pb-18 lg:pt-8 lg:pb-24 overflow-x-hidden">
       <div className="w-[80%] max-w-[1536px] aspect-[5/4] md:aspect-[4/3] lg:aspect-[1920/1300]">
         <TrafficCoverStage config={COVER_CONFIG} isFullscreenView />
       </div>
@@ -32,6 +33,8 @@ export default function App() {
           UBND TPHCM vừa ban hành Quyết định số 7308/QĐ-UBND ngày 31-10-2026 phê duyệt quy hoạch tổng thể TPHCM thời kỳ 2025-2050, tầm nhìn 100 năm. Quy hoạch mang tính bước ngoặt chiến lược, định hình tương lai phát triển của siêu đô thị lớn nhất cả nước trong kỷ nguyên mới.
         </p>
       </section>
+
+      <CityTriptychGallery />
     </main>
   );
 }

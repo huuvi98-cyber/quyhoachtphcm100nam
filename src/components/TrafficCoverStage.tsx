@@ -7,8 +7,9 @@ import {
 } from '../lib/trafficEngine';
 
 const VIDEO_SRC =
-  '/assets/aistudio/Quy_ho_ch_t_ng_th__TPHCM_th_i_k__2025-2050__t_m_nh_n_100_n_m_2c0c071a.mp4';
-const BASE_PLATE_SRC = '/assets/hcmc_cover_base.jpg?v=2';
+  '/assets/aistudio/Quy_ho_ch_t_ng_th__TPHCM_th_i_k__2025-2050__t_m_nh_n_100_n_m__2__91fa1a70.mp4';
+const SKY_PATCH_SRC = '/assets/sky_clean_dinhhinh.png?v=2';
+const DINH_HINH_SPRITE_SRC = '/assets/dinhhinh_sprite.png';
 
 export interface TrafficCoverStageHandle {
   capturePng: () => void;
@@ -27,29 +28,32 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
-    const baseImgRef = useRef<HTMLImageElement | null>(null);
+    const skyPatchRef = useRef<HTMLImageElement | null>(null);
+    const dinhHinhSpriteRef = useRef<HTMLImageElement | null>(null);
     const engineRef = useRef<TrafficEngine | null>(null);
     const configRef = useRef<TrafficConfig>(config);
 
-    const [plateReady, setPlateReady] = useState(false);
+    const [videoReady, setVideoReady] = useState(false);
     const [videoError, setVideoError] = useState(false);
 
     configRef.current = config;
 
-    // Preload clean 1920x1080 base plate (extracted from t=4.90s of source video without baked-in text)
+    // Preload exact sky patch & extracted original DINH HINH typography sprite
     useEffect(() => {
-      const img = new Image();
-      img.onload = () => {
-        baseImgRef.current = img;
-        setPlateReady(true);
+      const skyImg = new Image();
+      skyImg.decoding = 'async';
+      skyImg.src = SKY_PATCH_SRC;
+      skyImg.onload = () => {
+        skyPatchRef.current = skyImg;
       };
-      img.src = BASE_PLATE_SRC;
-    }, []);
 
-    // Replay smooth bottom-up reveal whenever user switches headline animation mode
-    useEffect(() => {
-      engineRef.current?.resetHeadline();
-    }, [config.headlineMode]);
+      const spriteImg = new Image();
+      spriteImg.decoding = 'async';
+      spriteImg.src = DINH_HINH_SPRITE_SRC;
+      spriteImg.onload = () => {
+        dinhHinhSpriteRef.current = spriteImg;
+      };
+    }, []);
 
     // Sync video playback with play/pause state
     useEffect(() => {
@@ -64,7 +68,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
       }
     }, [config.paused]);
 
-    // Main 60fps 1920x1080 animation loop
+    // Main 60fps 1920x1300 animation loop
     useEffect(() => {
       if (!engineRef.current) {
         engineRef.current = new TrafficEngine();
@@ -83,8 +87,12 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
         lastTs = now;
 
         const engine = engineRef.current!;
-        engine.update(dt, configRef.current);
-        engine.render(ctx, baseImgRef.current, videoRef.current, configRef.current);
+        const video = videoRef.current;
+        engine.update(dt, configRef.current, video ? video.currentTime : undefined);
+        engine.render(ctx, null, video, configRef.current, {
+          skyPatch: skyPatchRef.current,
+          dinhHinhSprite: dinhHinhSpriteRef.current,
+        });
 
         rafId = requestAnimationFrame(tick);
       };
@@ -98,7 +106,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
         const canvas = canvasRef.current;
         if (!canvas) return;
         const link = document.createElement('a');
-        link.download = 'bia-quy-hoach-tphcm-1920x1080.png';
+        link.download = 'bia-quy-hoach-tphcm-1920x1300.png';
         link.href = canvas.toDataURL('image/png', 1.0);
         link.click();
       },
@@ -111,10 +119,9 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
           throw new Error('Trình duyệt không hỗ trợ ghi hình trực tiếp từ canvas.');
         }
 
-        // Restart headline reveal & source video at t=0 so exported clip begins cleanly from bottom-up entry
-        engineRef.current?.resetHeadline();
         if (video) {
           video.currentTime = 0;
+          engineRef.current?.resetHeadline();
           await video.play().catch(() => {});
         }
 
@@ -129,7 +136,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
 
         const recorder = new MediaRecorder(stream, {
           ...(mimeType ? { mimeType } : {}),
-          videoBitsPerSecond: 14_000_000, // Crisp 14 Mbps 60fps for 1920x1080 website cover
+          videoBitsPerSecond: 16_000_000,
         });
 
         const chunks: BlobPart[] = [];
@@ -158,7 +165,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `bia-quy-hoach-tphcm-1920x1080.webm`;
+            a.download = 'bia-quy-hoach-tphcm-1920x1300.webm';
             a.click();
             window.setTimeout(() => URL.revokeObjectURL(url), 4000);
             resolve();
@@ -182,10 +189,10 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
         }
       },
       restartVideo: () => {
-        engineRef.current?.resetHeadline();
         const video = videoRef.current;
         if (!video) return;
         video.currentTime = 0;
+        engineRef.current?.resetHeadline();
         if (!configRef.current.paused) {
           video.play().catch(() => {});
         }
@@ -195,11 +202,11 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
     return (
       <div
         ref={containerRef}
-        className={`relative w-full h-full bg-[#A61C24] overflow-hidden select-none ${
+        className={`relative w-full h-full bg-[#0D5CB6] overflow-hidden select-none ${
           isFullscreenView ? 'h-full' : ''
         }`}
       >
-        {/* Source 4K footage kept in DOM offscreen for "Video gốc" comparison */}
+        {/* Native 1920x1300 video source composited cleanly onto canvas */}
         <video
           ref={videoRef}
           src={VIDEO_SRC}
@@ -209,33 +216,32 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
           playsInline
           preload="auto"
           onLoadedData={() => {
-            setPlateReady(true);
+            setVideoReady(true);
             setVideoError(false);
+            engineRef.current?.resetHeadline();
           }}
-          onError={() => {
-            if (!baseImgRef.current) setVideoError(true);
-          }}
+          onError={() => setVideoError(true)}
           className="sr-only"
           aria-hidden="true"
         />
 
-        {/* True native 1920x1080 website cover output canvas */}
+        {/* True native 1920x1300 website cover output canvas */}
         <canvas
           ref={canvasRef}
           width={CANVAS_WIDTH}
           height={CANVAS_HEIGHT}
-          className="block w-full h-full object-cover object-[49.4%_50%]"
-          aria-label="Bìa website Quy hoạch tổng thể TP.HCM giai đoạn 2025-2050 kích thước 1920 nhân 1080 với đường sáng mảnh chuyển động và tiêu đề Định hình siêu đô thị toàn cầu, lấy con người làm trung tâm"
+          className="block w-full h-full object-cover object-center"
+          aria-label="Bìa website Quy hoạch tổng thể TP.HCM giai đoạn 2025-2050 kích thước 1920 nhân 1300 với Landmark 81 và đường sáng mảnh chuyển động qua cầu Sài Gòn"
         />
 
-        {!plateReady && !videoError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#A61C24]/95 text-sm text-[#FCEEEB]">
-            Đang tải khung hình 1920 × 1080…
+        {!videoReady && !videoError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-[#0D5CB6]/95 text-sm text-[#EAF4FF]">
+            Đang tải khung hình 1920 × 1300…
           </div>
         )}
 
         {videoError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#A61C24] text-sm text-[#FCEEEB] px-6 text-center">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#0D5CB6] text-sm text-[#EAF4FF] px-6 text-center">
             Không thể tải tệp video nguồn. Vui lòng kiểm tra lại kết nối và tải lại trang.
           </div>
         )}

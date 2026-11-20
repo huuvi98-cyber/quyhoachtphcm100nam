@@ -195,7 +195,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
     return (
       <div
         ref={containerRef}
-        className={`relative w-full aspect-video bg-[#A61C24] overflow-hidden select-none ${
+        className={`relative w-full h-full bg-[#A61C24] overflow-hidden select-none ${
           isFullscreenView ? 'h-full' : ''
         }`}
       >
@@ -224,7 +224,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
           ref={canvasRef}
           width={CANVAS_WIDTH}
           height={CANVAS_HEIGHT}
-          className="block w-full h-full object-cover"
+          className="block w-full h-full object-cover object-[49.4%_50%]"
           aria-label="Bìa website Quy hoạch tổng thể TP.HCM giai đoạn 2025-2050 kích thước 1920 nhân 1080 với đường sáng mảnh chuyển động và tiêu đề Định hình siêu đô thị toàn cầu, lấy con người làm trung tâm"
         />
 

@@ -195,7 +195,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
     return (
       <div
         ref={containerRef}
-        className={`relative w-full aspect-video bg-[#12100E] overflow-hidden select-none ${
+        className={`relative w-full aspect-video bg-[#A61C24] overflow-hidden select-none ${
           isFullscreenView ? 'h-full' : ''
         }`}
       >
@@ -229,13 +229,13 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
         />
 
         {!plateReady && !videoError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#12100E]/90 text-sm text-[#A8A095]">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#A61C24]/95 text-sm text-[#FCEEEB]">
             Đang tải khung hình 1920 × 1080…
           </div>
         )}
 
         {videoError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#12100E] text-sm text-[#D69A8A] px-6 text-center">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#A61C24] text-sm text-[#FCEEEB] px-6 text-center">
             Không thể tải tệp video nguồn. Vui lòng kiểm tra lại kết nối và tải lại trang.
           </div>
         )}

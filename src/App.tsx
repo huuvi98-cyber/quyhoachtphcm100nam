@@ -16,7 +16,7 @@ const COVER_CONFIG: TrafficConfig = {
 
 export default function App() {
   return (
-    <main className="w-full min-h-screen bg-[#0C0B0A] flex items-center justify-center overflow-x-hidden">
+    <main className="w-full min-h-screen bg-[#A61C24] flex items-center justify-center overflow-x-hidden">
       <div className="w-full aspect-video">
         <TrafficCoverStage config={COVER_CONFIG} isFullscreenView />
       </div>

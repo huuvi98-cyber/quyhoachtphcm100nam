@@ -534,11 +534,11 @@ export const GROWTH_POLES: GrowthPole[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// 5. TIMELINE STORY CHAPTERS & CAMERA CHOREOGRAPHY (SEAMLESS 5-POLE AUTO-ZOOM)
-//    Strictly upright (pitch: 0, bearing: 0) with zero distortion
+// 5. TIMELINE STORY CHAPTERS & 3D CAMERA FLY-THROUGH CHOREOGRAPHY
+//    Cinematic 3D perspective (pitch 36°–56°, dynamic bearing orbit & zoom)
 // ---------------------------------------------------------------------------
 
-export const TIMELINE_DURATION_SEC = 32;
+export const TIMELINE_DURATION_SEC = 34;
 
 export const TIMELINE_CHAPTERS: TimelineChapter[] = [
   {
@@ -597,28 +597,97 @@ export const TIMELINE_CHAPTERS: TimelineChapter[] = [
   },
 ];
 
+export const OVERVIEW_3D_CAMERA = {
+  center: uvToLngLat(0.48, 0.53),
+  zoom: 8.2,
+  pitch: 38,
+  bearing: -10,
+};
+
+export const POLE_CAMERA_TARGETS: Record<
+  string,
+  { center: [number, number]; zoom: number; pitch: number; bearing: number }
+> = {
+  'pole-north': { center: uvToLngLat(0.39, 0.34), zoom: 9.75, pitch: 52, bearing: 14 },
+  'pole-east-northeast': { center: uvToLngLat(0.49, 0.51), zoom: 9.9, pitch: 54, bearing: -16 },
+  'pole-core': { center: uvToLngLat(0.39, 0.58), zoom: 10.15, pitch: 56, bearing: 16 },
+  'pole-west': { center: uvToLngLat(0.26, 0.57), zoom: 9.75, pitch: 50, bearing: -15 },
+  'pole-south': { center: uvToLngLat(0.56, 0.79), zoom: 9.6, pitch: 52, bearing: 18 },
+};
+
 export const CAMERA_KEYFRAMES: CameraKeyframe[] = [
-  // Full overview of all 5 growth poles (matches t = 1.0 for seamless looping)
-  { t: 0.0, center: uvToLngLat(0.5, 0.5), zoom: 8.05, pitch: 0, bearing: 0 },
-  { t: 0.07, center: uvToLngLat(0.5, 0.5), zoom: 8.05, pitch: 0, bearing: 0 },
-  // 1. Auto-zoom onto Cực công nghiệp - logistics phía Bắc
-  { t: 0.16, center: uvToLngLat(0.41, 0.33), zoom: 9.2, pitch: 0, bearing: 0 },
-  { t: 0.24, center: uvToLngLat(0.41, 0.33), zoom: 9.25, pitch: 0, bearing: 0 },
-  // 2. Glide & zoom onto Cực đổi mới sáng tạo phía Đông, Đông Bắc
-  { t: 0.33, center: uvToLngLat(0.51, 0.51), zoom: 9.3, pitch: 0, bearing: 0 },
-  { t: 0.41, center: uvToLngLat(0.51, 0.51), zoom: 9.35, pitch: 0, bearing: 0 },
-  // 3. Glide & zoom onto Cực lõi trung tâm
-  { t: 0.5, center: uvToLngLat(0.39, 0.59), zoom: 9.4, pitch: 0, bearing: 0 },
-  { t: 0.58, center: uvToLngLat(0.39, 0.59), zoom: 9.44, pitch: 0, bearing: 0 },
-  // 4. Glide & zoom onto Cực đô thị, giáo dục, y tế phía Tây
-  { t: 0.67, center: uvToLngLat(0.24, 0.56), zoom: 9.3, pitch: 0, bearing: 0 },
-  { t: 0.74, center: uvToLngLat(0.24, 0.56), zoom: 9.35, pitch: 0, bearing: 0 },
-  // 5. Glide & zoom onto Cực cảng biển - thương mại tự do - công nghiệp năng lượng phía Nam
-  { t: 0.83, center: uvToLngLat(0.59, 0.76), zoom: 9.2, pitch: 0, bearing: 0 },
-  { t: 0.91, center: uvToLngLat(0.59, 0.76), zoom: 9.25, pitch: 0, bearing: 0 },
-  // Pull back smoothly to full overview of all 5 poles
-  { t: 1.0, center: uvToLngLat(0.5, 0.5), zoom: 8.05, pitch: 0, bearing: 0 },
+  // 3D aerial opening overview of all 5 growth poles (matches t = 1.0 for seamless looping)
+  { t: 0.0, center: uvToLngLat(0.48, 0.53), zoom: 8.2, pitch: 38, bearing: -10 },
+  { t: 0.06, center: uvToLngLat(0.48, 0.53), zoom: 8.32, pitch: 42, bearing: -6 },
+  // 1. 3D swoop & zoom onto Cực công nghiệp - logistics phía Bắc
+  { t: 0.15, center: uvToLngLat(0.39, 0.34), zoom: 9.65, pitch: 52, bearing: 10 },
+  { t: 0.24, center: uvToLngLat(0.4, 0.35), zoom: 9.8, pitch: 54, bearing: 18 },
+  // 2. 3D bank & zoom onto Cực đổi mới sáng tạo phía Đông, Đông Bắc
+  { t: 0.33, center: uvToLngLat(0.49, 0.51), zoom: 9.8, pitch: 54, bearing: -12 },
+  { t: 0.41, center: uvToLngLat(0.495, 0.515), zoom: 9.95, pitch: 56, bearing: -19 },
+  // 3. Hero 3D dive & orbit over Cực lõi trung tâm (Sài Gòn - Thủ Thiêm)
+  { t: 0.5, center: uvToLngLat(0.39, 0.58), zoom: 10.05, pitch: 56, bearing: 8 },
+  { t: 0.58, center: uvToLngLat(0.388, 0.578), zoom: 10.22, pitch: 58, bearing: 20 },
+  // 4. 3D sweep & zoom onto Cực đô thị, giáo dục, y tế phía Tây
+  { t: 0.67, center: uvToLngLat(0.26, 0.57), zoom: 9.68, pitch: 50, bearing: -10 },
+  { t: 0.74, center: uvToLngLat(0.255, 0.568), zoom: 9.82, pitch: 52, bearing: -18 },
+  // 5. 3D coastal swoop onto Cực cảng biển - thương mại tự do - năng lượng phía Nam
+  { t: 0.83, center: uvToLngLat(0.56, 0.79), zoom: 9.52, pitch: 52, bearing: 12 },
+  { t: 0.91, center: uvToLngLat(0.57, 0.785), zoom: 9.68, pitch: 54, bearing: 22 },
+  // Smooth aerial climb back to 3D overview
+  { t: 1.0, center: uvToLngLat(0.48, 0.53), zoom: 8.2, pitch: 38, bearing: -10 },
 ];
+
+/** Builds concentric 3D extruded cylindrical ring polygons around the 5 growth poles */
+export function buildPole3DRingsGeoJSON(): FeatureCollection<Polygon> {
+  const poleUvCenters: Array<{ id: string; u: number; v: number; color: string; height: number }> =
+    [
+      { id: 'pole-core', u: 0.3861, v: 0.5784, color: '#EA580C', height: 4200 },
+      { id: 'pole-east-northeast', u: 0.474, v: 0.5151, color: '#0284C7', height: 3400 },
+      { id: 'pole-north', u: 0.3678, v: 0.3281, color: '#E11D48', height: 3400 },
+      { id: 'pole-south', u: 0.565, v: 0.8139, color: '#D97706', height: 3600 },
+      { id: 'pole-west', u: 0.2467, v: 0.5682, color: '#2563EB', height: 3200 },
+    ];
+
+  const aspect = IMG_WIDTH / IMG_HEIGHT;
+  const segments = 32;
+  const innerR = 0.0255;
+  const outerR = 0.0315;
+
+  const features: Array<Feature<Polygon>> = poleUvCenters.map((p) => {
+    const outerRing: Array<[number, number]> = [];
+    const innerRing: Array<[number, number]> = [];
+    for (let i = 0; i <= segments; i++) {
+      const theta = (i / segments) * Math.PI * 2;
+      const cos = Math.cos(theta);
+      const sin = Math.sin(theta);
+      outerRing.push(uvToLngLat(p.u + cos * outerR, p.v + sin * outerR * aspect));
+      // Reverse winding for inner cutout hole
+      const thetaRev = ((segments - i) / segments) * Math.PI * 2;
+      innerRing.push(
+        uvToLngLat(
+          p.u + Math.cos(thetaRev) * innerR,
+          p.v + Math.sin(thetaRev) * innerR * aspect
+        )
+      );
+    }
+
+    return {
+      type: 'Feature',
+      properties: {
+        id: p.id,
+        color: p.color,
+        height: p.height,
+      },
+      geometry: {
+        type: 'Polygon',
+        coordinates: [outerRing, innerRing],
+      },
+    };
+  });
+
+  return { type: 'FeatureCollection', features };
+}
 
 // ---------------------------------------------------------------------------
 // 6. GEOMETRY ANIMATION HELPERS (FOR requestAnimationFrame)
@@ -627,6 +696,11 @@ export const CAMERA_KEYFRAMES: CameraKeyframe[] = [
 function smoothstep(t: number): number {
   const c = Math.max(0, Math.min(1, t));
   return c * c * (3 - 2 * c);
+}
+
+function smootherstep(t: number): number {
+  const c = Math.max(0, Math.min(1, t));
+  return c * c * c * (c * (c * 6 - 15) + 10);
 }
 
 export function interpolateCamera(progress: number): {
@@ -640,15 +714,15 @@ export function interpolateCamera(progress: number): {
     const a = CAMERA_KEYFRAMES[i];
     const b = CAMERA_KEYFRAMES[i + 1];
     if (p >= a.t && p <= b.t) {
-      const local = b.t === a.t ? 1 : smoothstep((p - a.t) / (b.t - a.t));
+      const local = b.t === a.t ? 1 : smootherstep((p - a.t) / (b.t - a.t));
       return {
         center: [
           a.center[0] + (b.center[0] - a.center[0]) * local,
           a.center[1] + (b.center[1] - a.center[1]) * local,
         ],
         zoom: a.zoom + (b.zoom - a.zoom) * local,
-        pitch: 0,
-        bearing: 0,
+        pitch: a.pitch + (b.pitch - a.pitch) * local,
+        bearing: a.bearing + (b.bearing - a.bearing) * local,
       };
     }
   }
@@ -656,8 +730,8 @@ export function interpolateCamera(progress: number): {
   return {
     center: [...last.center],
     zoom: last.zoom,
-    pitch: 0,
-    bearing: 0,
+    pitch: last.pitch,
+    bearing: last.bearing,
   };
 }
 

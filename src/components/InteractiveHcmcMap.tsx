@@ -513,11 +513,11 @@ export function InteractiveHcmcMap() {
                   width: `${cardW}px`,
                   transform: showAbove ? 'translateY(-100%)' : 'translateY(0)',
                 }}
-                className="pointer-events-none absolute z-30 bg-[#083D88]/96 backdrop-blur-md border border-[#FED84D]/75 px-4 py-3 text-left shadow-[0_16px_40px_rgba(4,28,72,0.45)] transition-opacity duration-150"
+                className="pointer-events-none absolute z-30 rounded-xl bg-[#083D88]/96 backdrop-blur-md border border-[#FED84D]/75 px-4 py-3 text-left shadow-[0_16px_40px_rgba(4,28,72,0.45)] transition-opacity duration-150"
               >
                 <div className="flex items-center gap-2">
                   <span
-                    className="inline-block w-2.5 h-2.5 shrink-0"
+                    className="inline-block w-2.5 h-2.5 rounded-[2px] shrink-0"
                     style={{ backgroundColor: hoveredPole.pole.accentColor }}
                   />
                   <h3 className="text-[13px] sm:text-sm font-bold text-[#FED84D] leading-snug">

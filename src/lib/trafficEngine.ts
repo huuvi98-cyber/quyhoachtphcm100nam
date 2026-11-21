@@ -50,6 +50,10 @@ const LIME_B = 102;
 const TEXT_R = 1;
 const TEXT_G = 64;
 const TEXT_B = 161;
+// Full-resolution BT.709 luma values (H.264 yuv420p stores luma at full 1920x1300 res vs half-res chroma)
+const Y_LIME = 0.2126 * LIME_R + 0.7152 * LIME_G + 0.0722 * LIME_B; // 228.14
+const Y_TEXT = 0.2126 * TEXT_R + 0.7152 * TEXT_G + 0.0722 * TEXT_B; // 57.61
+const Y_LIME_SPAN = Y_LIME - Y_TEXT; // 170.53
 
 // Build exact mathematical vector Path2D for "ĐỊNH HÌNH" calibrated pixel-for-pixel to the 1920x1300 master layout.
 // Uses clockwise outer contours + counter-clockwise counter on "Đ" so nonzero fill gives razor-sharp vector edges
@@ -713,15 +717,11 @@ export class TrafficEngine {
     const data = imgData.data;
 
     // Local X ranges inside BAND_X=196..1552:
-    //  - Left headline region: xGlobal = 198..926  -> lx = 2..730
+    //  - Left headline region: xGlobal = 198..926   -> lx = 2..730
     //  - Right headline region: xGlobal = 1006..1549 -> lx = 810..1353
-    // Local Y range for the lime bar (yGlobal = 401.5..484.5 -> ly = 2.5..85.5, safe above TRUNG TÂM at y=488):
+    // Local Y range covering yGlobal = 400..485 (strictly above TRUNG TÂM at y=488):
     const lyStart = 1; // yGlobal = 400
     const lyEnd = 86;  // yGlobal = 485
-
-    const lrMinusTr = LIME_R - TEXT_R;
-    const lgMinusTg = LIME_G - TEXT_G;
-    const rightDenom = lrMinusTr * lrMinusTr + lgMinusTg * lgMinusTg;
 
     for (let ly = lyStart; ly <= lyEnd; ly++) {
       const yGlobal = BAND_Y + ly;
@@ -732,7 +732,7 @@ export class TrafficEngine {
 
       const rowOff = ly * BAND_W;
 
-      // 1. Left side ("SIÊU ĐÔ THỊ TOÀN CẦU,"): composite gliding lime bar BEHIND dark-blue text
+      // 1. Left side ("SIÊU ĐÔ THỊ TOÀN CẦU,"): full-res BT.709 luma matte keeps text razor-sharp over gliding lime bar
       if (vCov > 0 && barRight > BAND_X && barLeft < 928) {
         const lxFrom = Math.max(0, Math.floor(barLeft) - BAND_X);
         const lxTo = Math.min(732, Math.ceil(barRight) - BAND_X);
@@ -750,27 +750,24 @@ export class TrafficEngine {
           const sg = cleanPx[idx + 1];
           const sb = cleanPx[idx + 2];
 
-          // Extract anti-aliased dark-blue text alpha against clean sky background
+          // Full-resolution luma alpha extraction (avoids yuv420p 2x2 chroma stair-stepping)
           let textAlpha = 0;
-          if (r < sr - 6 && g < sg - 6) {
-            const dr = sr - TEXT_R;
-            const dg = sg - TEXT_G;
-            const db = sb - TEXT_B;
-            const denom = dr * dr + dg * dg + db * db;
-            if (denom > 400) {
-              const rawA = ((sr - r) * dr + (sg - g) * dg + (sb - b) * db) / denom;
-              if (rawA > 0.05) {
-                textAlpha = clamp((rawA - 0.05) / 0.95, 0, 1);
+          if (r < sr - 4 && g < sg - 4) {
+            const ySky = 0.2126 * sr + 0.7152 * sg + 0.0722 * sb;
+            const ySpan = ySky - Y_TEXT;
+            if (ySpan > 35) {
+              const yPix = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+              const rawA = (ySky - yPix) / ySpan;
+              if (rawA > 0.025) {
+                textAlpha = clamp((rawA - 0.025) / 0.96, 0, 1);
               }
             }
           }
 
-          // Background transitions smoothly from sky -> lime bar according to sub-pixel edge coverage
           const bgR = sr + (LIME_R - sr) * cov;
           const bgG = sg + (LIME_G - sg) * cov;
           const bgB = sb + (LIME_B - sb) * cov;
 
-          // Keep dark-blue text razor-sharp and anti-aliased on top of the gliding lime bar
           data[idx] = Math.round(bgR + (TEXT_R - bgR) * textAlpha);
           data[idx + 1] = Math.round(bgG + (TEXT_G - bgG) * textAlpha);
           data[idx + 2] = Math.round(bgB + (TEXT_B - bgB) * textAlpha);
@@ -779,11 +776,13 @@ export class TrafficEngine {
       }
 
       // 2. Right side ("LẤY CON NGƯỜI"):
-      //    - Un-matte video's premature lime bar back to clean sky wherever our gliding bar hasn't arrived yet
-      //    - Keep "LẤY CON NGƯỜI" dark-blue letters 100% crisp on top
-      //    - Draw the extended lime bar cleanly out to x = 1547.5 as barRight reaches it
+      //    Full-res BT.709 luma matte ensures letters are 100% identical & silky-smooth both on sky and on lime bar
+      //    with zero chroma stair-stepping and zero stray green hairline at x=1527..1529.
       const rFrom = 810; // xGlobal = 1006
       const rTo = 1353;  // xGlobal = 1549
+      const inTextRows = yGlobal >= 403 && yGlobal <= 478;
+      const inAcuteRow = yGlobal === 402;
+
       for (let lx = rFrom; lx <= rTo; lx++) {
         const xGlobal = BAND_X + lx;
         const hCov =
@@ -797,45 +796,20 @@ export class TrafficEngine {
         const sg = cleanPx[idx + 1];
         const sb = cleanPx[idx + 2];
 
-        // Right extension strip (x = 1527..1548): no text here, pure clean sky -> lime bar
-        if (xGlobal >= 1527) {
-          if (cov > 0.005) {
-            data[idx] = Math.round(sr + (LIME_R - sr) * cov);
-            data[idx + 1] = Math.round(sg + (LIME_G - sg) * cov);
-            data[idx + 2] = Math.round(sb + (LIME_B - sb) * cov);
-            data[idx + 3] = 255;
-          }
-          continue;
-        }
-
-        // Inside video's built-in lime bar area (x = 1006..1526):
-        // If our gliding bar fully covers this pixel (and vt >= 0.72 so video's bar is already full here), keep crisp video as-is
-        if (cov >= 0.995 && vt >= 0.72) {
-          continue;
-        }
-
-        const r = data[idx];
-        const g = data[idx + 1];
-        const b = data[idx + 2];
-
-        // If pixel already matches clean sky closely (no text and no lime bar yet), leave or blend directly with lime
-        const skyDiff = Math.abs(r - sr) + Math.abs(g - sg) + Math.abs(b - sb);
-        if (skyDiff < 32) {
-          if (cov > 0.005) {
-            data[idx] = Math.round(sr + (LIME_R - sr) * cov);
-            data[idx + 1] = Math.round(sg + (LIME_G - sg) * cov);
-            data[idx + 2] = Math.round(sb + (LIME_B - sb) * cov);
-            data[idx + 3] = 255;
-          }
-          continue;
-        }
-
-        // Un-matte dark-blue "LẤY CON NGƯỜI" text from the video's lime bar using (R, G) channels
         let textAlpha = 0;
-        if (vt >= 0.65 && r < LIME_R - 10 && g < LIME_G - 10 && b > 95) {
-          const rawA = ((LIME_R - r) * lrMinusTr + (LIME_G - g) * lgMinusTg) / rightDenom;
-          if (rawA > 0.07) {
-            textAlpha = clamp((rawA - 0.07) / 0.93, 0, 1);
+        if (
+          vt >= 0.65 &&
+          xGlobal >= 1028 &&
+          xGlobal <= 1505 &&
+          (inTextRows || (inAcuteRow && xGlobal >= 1075 && xGlobal <= 1120))
+        ) {
+          const r = data[idx];
+          const g = data[idx + 1];
+          const b = data[idx + 2];
+          const yPix = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+          const rawA = (Y_LIME - yPix) / Y_LIME_SPAN;
+          if (rawA > 0.025) {
+            textAlpha = clamp((rawA - 0.025) / 0.96, 0, 1);
           }
         }
 

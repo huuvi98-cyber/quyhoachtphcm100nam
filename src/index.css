@@ -288,7 +288,8 @@
   gap: 6px;
   width: max-content;
   max-width: 195px;
-  padding: 5px 9px;
+  padding: 5px 10px;
+  border-radius: 10px;
   background: rgba(8, 61, 136, 0.94);
   border: 1px solid rgba(254, 216, 77, 0.65);
   box-shadow: 0 6px 18px rgba(4, 28, 72, 0.36);
@@ -306,6 +307,7 @@
   width: 7px;
   height: 7px;
   margin-top: 4px;
+  border-radius: 2px;
   flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.85);
 }

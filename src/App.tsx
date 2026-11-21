@@ -5,7 +5,7 @@ import { TrafficConfig } from './lib/trafficEngine';
 
 const COVER_CONFIG: TrafficConfig = {
   mode: 'lines',
-  headlineMode: 'rise-loop',
+  headlineMode: 'static',
   speed: 1.1,
   density: 1.15,
   trailIntensity: 0.92,

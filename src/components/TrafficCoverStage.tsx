@@ -9,7 +9,6 @@ import {
 const VIDEO_SRC =
   '/assets/aistudio/Quy_ho_ch_t_ng_th__TPHCM_th_i_k__2025-2050__t_m_nh_n_100_n_m__2__91fa1a70.mp4';
 const SKY_PATCH_SRC = '/assets/sky_clean_dinhhinh.png?v=2';
-const DINH_HINH_SPRITE_SRC = '/assets/dinhhinh_sprite.png';
 
 export interface TrafficCoverStageHandle {
   capturePng: () => void;
@@ -29,7 +28,6 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const skyPatchRef = useRef<HTMLImageElement | null>(null);
-    const dinhHinhSpriteRef = useRef<HTMLImageElement | null>(null);
     const engineRef = useRef<TrafficEngine | null>(null);
     const configRef = useRef<TrafficConfig>(config);
 
@@ -38,20 +36,13 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
 
     configRef.current = config;
 
-    // Preload exact sky patch & extracted original DINH HINH typography sprite
+    // Preload exact clean sky patch for seamless static vector DINH HINH rendering
     useEffect(() => {
       const skyImg = new Image();
       skyImg.decoding = 'async';
       skyImg.src = SKY_PATCH_SRC;
       skyImg.onload = () => {
         skyPatchRef.current = skyImg;
-      };
-
-      const spriteImg = new Image();
-      spriteImg.decoding = 'async';
-      spriteImg.src = DINH_HINH_SPRITE_SRC;
-      spriteImg.onload = () => {
-        dinhHinhSpriteRef.current = spriteImg;
       };
     }, []);
 
@@ -91,7 +82,6 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
         engine.update(dt, configRef.current, video ? video.currentTime : undefined);
         engine.render(ctx, null, video, configRef.current, {
           skyPatch: skyPatchRef.current,
-          dinhHinhSprite: dinhHinhSpriteRef.current,
         });
 
         rafId = requestAnimationFrame(tick);

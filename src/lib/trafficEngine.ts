@@ -1,5 +1,5 @@
 export type VisualMode = 'lines' | 'rich' | 'original';
-export type HeadlineMode = 'rise-loop' | 'rise-hold' | 'hidden';
+export type HeadlineMode = 'static' | 'rise-loop' | 'rise-hold' | 'hidden';
 
 export interface TrafficConfig {
   mode: VisualMode;
@@ -16,7 +16,7 @@ export interface TrafficConfig {
 
 export interface HeadlineAssets {
   skyPatch: HTMLImageElement | null;
-  dinhHinhSprite: HTMLImageElement | null;
+  dinhHinhSprite?: HTMLImageElement | null;
 }
 
 export const CANVAS_WIDTH = 1920;
@@ -34,11 +34,114 @@ const RED_STRIP_Y = 398;
 const RED_STRIP_W = 456;
 const RED_STRIP_H = 34;
 
-// Exact coordinate box of the extracted dinhhinh_sprite.png asset
-const DINH_HINH_X = 470;
-const DINH_HINH_Y = 165;
-const DINH_HINH_W = 980;
-const DINH_HINH_H = 260;
+// Bright lime-green bar under "LẤY CON NGƯỜI" extended on the right to align flush with "TRUNG TÂM" (x=1547.5)
+const LIME_BAR_EXT_START_X = 1525;
+const LIME_BAR_EXT_END_X = 1547.5;
+const LIME_BAR_Y = 401.5;
+const LIME_BAR_H = 83;
+const LIME_BAR_COLOR = '#B8FE66';
+
+// Build exact mathematical vector Path2D for "ĐỊNH HÌNH" calibrated pixel-for-pixel to the 1920x1300 master layout.
+// Uses clockwise outer contours + counter-clockwise counter on "Đ" so nonzero fill gives razor-sharp vector edges
+// with zero pixelation, zero H.264 chroma blur, and one uniform subtle drop shadow.
+function buildDinhHinhVectorPath(): Path2D {
+  const p = new Path2D();
+  const yTop = 212;
+  const yBot = 367.5;
+  const capH = yBot - yTop;
+  const r = 2;
+
+  const addRoundRect = (x: number, y: number, w: number, h: number, rad: number) => {
+    const cr = Math.min(rad, w / 2, h / 2);
+    p.moveTo(x + cr, y);
+    p.lineTo(x + w - cr, y);
+    p.arcTo(x + w, y, x + w, y + cr, cr);
+    p.lineTo(x + w, y + h - cr);
+    p.arcTo(x + w, y + h, x + w - cr, y + h, cr);
+    p.lineTo(x + cr, y + h);
+    p.arcTo(x, y + h, x, y + h - cr, cr);
+    p.lineTo(x, y + cr);
+    p.arcTo(x, y, x + cr, y, cr);
+    p.closePath();
+  };
+
+  // 1. "Đ" — outer D (clockwise)
+  p.moveTo(500 + r, yTop);
+  p.lineTo(576.5, yTop);
+  p.arcTo(601.5, yTop, 601.5, yTop + 25, 25);
+  p.lineTo(601.5, yBot - 25);
+  p.arcTo(601.5, yBot, 576.5, yBot, 25);
+  p.lineTo(500 + r, yBot);
+  p.arcTo(500, yBot, 500, yBot - r, r);
+  p.lineTo(500, yTop + r);
+  p.arcTo(500, yTop, 500 + r, yTop, r);
+  p.closePath();
+
+  // "Đ" — inner counter (counter-clockwise so nonzero fill punches clean hole)
+  p.moveTo(533, 240);
+  p.lineTo(533, 338);
+  p.lineTo(564, 338);
+  p.arcTo(570, 338, 570, 332, 6);
+  p.lineTo(570, 246);
+  p.arcTo(570, 240, 564, 240, 6);
+  p.closePath();
+
+  // "Đ" — horizontal crossbar (clockwise)
+  addRoundRect(490, 279, 59, 24.5, 1.5);
+
+  // 2. "Ị" — vertical stem + circular dot
+  addRoundRect(622, yTop, 33, capH, r);
+  p.moveTo(637.5 + 15.6, 393.5);
+  p.arc(637.5, 393.5, 15.6, 0, Math.PI * 2, false);
+  p.closePath();
+
+  // Helper for "N" (identical geometric construction for both N1 and N2)
+  const addN = (x0: number) => {
+    addRoundRect(x0, yTop, 33, capH, r);
+    addRoundRect(x0 + 82, yTop, 33, capH, r);
+    p.moveTo(x0 + 30, yTop);
+    p.lineTo(x0 + 60, yTop);
+    p.lineTo(x0 + 78, 338.5);
+    p.lineTo(x0 + 85, 338.5);
+    p.lineTo(x0 + 85, yBot);
+    p.lineTo(x0 + 56, yBot);
+    p.lineTo(x0 + 38, 238.5);
+    p.lineTo(x0 + 30, 238.5);
+    p.closePath();
+  };
+
+  // Helper for "H" (vertical stems + crossbar)
+  const addH = (x0: number, totalW: number, stemW: number) => {
+    addRoundRect(x0, yTop, stemW, capH, r);
+    addRoundRect(x0 + totalW - stemW, yTop, stemW, capH, r);
+    addRoundRect(x0 + 2, 275.5, totalW - 4, 28, 1);
+  };
+
+  // 3. "N" (first)
+  addN(676);
+
+  // 4. "H" (first)
+  addH(814, 101.5, 32.5);
+
+  // 5. "H" (second — clipped cleanly behind Landmark 81 via BUILDING_MASKS)
+  addH(996, 103, 33);
+
+  // 6. "Ì" — vertical stem + crisp slanted grave accent
+  addRoundRect(1121.5, yTop, 32.5, capH, r);
+  p.moveTo(1111, 173.5);
+  p.lineTo(1135, 173.5);
+  p.lineTo(1150.5, 202.5);
+  p.lineTo(1134.5, 202.5);
+  p.closePath();
+
+  // 7. "N" (second)
+  addN(1176);
+
+  // 8. "H" (third)
+  addH(1312, 103.5, 33);
+
+  return p;
+}
 
 interface PathPoint {
   x: number;
@@ -279,6 +382,7 @@ export class TrafficEngine {
   private redStripCtx: CanvasRenderingContext2D | null = null;
   private cleanSkyStripPixels: Uint8ClampedArray | null = null;
   private cleanSkyStripSource: HTMLImageElement | null = null;
+  private dinhHinhPath: Path2D | null = null;
 
   constructor() {
     this.initFilaments();
@@ -436,18 +540,21 @@ export class TrafficEngine {
     }
     ctx.clip('evenodd');
 
-    // 1. Restore clean sky first (erases both the baked-in horizontal red wipe bar and static "ĐỊNH HÌNH")
-    // so ascending sky AI filaments glide cleanly behind the rising headline
+    // 1. Restore clean sky first (erases both the baked-in horizontal red wipe bar and compressed video "ĐỊNH HÌNH")
+    // so ascending sky AI filaments glide cleanly behind the crisp static vector headline
     if (config.headlineMode !== 'hidden' && headlineAssets?.skyPatch) {
       this.drawCleanSkyOverSweepAndHeadline(ctx, videoEl, headlineAssets.skyPatch);
     }
+
+    // 2. Extend the bright lime-green background under "LẤY CON NGƯỜI" to align flush with "TRUNG TÂM" (x=1547.5)
+    this.drawExtendedLimeBar(ctx, videoEl);
 
     if (config.showAiLines) {
       this.drawAscendingAiLines(ctx, config);
     }
 
-    if (config.headlineMode !== 'hidden' && headlineAssets) {
-      this.drawRisingDinhHinh(ctx, headlineAssets);
+    if (config.headlineMode !== 'hidden') {
+      this.drawCrispDinhHinh(ctx, config.headlineMode);
     }
 
     if (config.trailIntensity > 0.01) {
@@ -604,58 +711,72 @@ export class TrafficEngine {
     }
   }
 
-  private drawRisingDinhHinh(
+  private drawExtendedLimeBar(
     ctx: CanvasRenderingContext2D,
-    assets: HeadlineAssets
+    videoEl: HTMLVideoElement | null
   ): void {
-    const { skyPatch, dinhHinhSprite } = assets;
-    if (!skyPatch || !dinhHinhSprite) return;
+    // Sync smoothly with the video's left-to-right wipe of the "LẤY CON NGƯỜI" lime bar (reaches x=1527 at t=0.66s)
+    const vt = videoEl ? videoEl.currentTime : 1;
+    if (vt < 0.61) return;
 
-    // Smooth 60fps bottom-up rise synchronized with the 5s video loop
-    const startDelay = 0.08;
-    const riseDuration = 1.42;
-    const rawProgress = clamp((this.headlineElapsed - startDelay) / riseDuration, 0, 1);
-    if (rawProgress <= 0) return;
-
-    const eased = easeOutSilk(rawProgress);
-    const travelY = 232;
-    const offsetY = (1 - eased) * travelY;
-    const alpha = clamp(rawProgress / 0.26, 0, 1);
-
-    // Razor-straight architectural emergence line at y=396 (cleanly above "SIÊU ĐÔ THỊ TOÀN CẦU," & "LẤY CON NGƯỜI").
-    // Once letters rise above y=396 (offsetY < 34), smoothly open the narrow column under "Ị" (x=614..660) to y=416
-    // so the round "dấu nặng" dot (x=622..653) lands 100% full while staying clear of "À" in "TOÀN" (x=666..678).
-    const dotReveal = clamp((34 - offsetY) / 24, 0, 1);
-    const dotBottomY = lerp(396, 416, dotReveal);
+    const progress = clamp((vt - 0.61) / 0.12, 0, 1);
+    const eased = easeOutSilk(progress);
+    const extWidth = (LIME_BAR_EXT_END_X - LIME_BAR_EXT_START_X) * eased;
+    if (extWidth <= 0.25) return;
 
     ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(460, 158);
-    ctx.lineTo(1460, 158);
-    ctx.lineTo(1460, 396);
-    ctx.lineTo(660, 396);
-    ctx.lineTo(660, dotBottomY);
-    ctx.lineTo(614, dotBottomY);
-    ctx.lineTo(614, 396);
-    ctx.lineTo(460, 396);
-    ctx.closePath();
-    ctx.clip();
+    ctx.fillStyle = LIME_BAR_COLOR;
+    ctx.fillRect(LIME_BAR_EXT_START_X, LIME_BAR_Y, extWidth, LIME_BAR_H);
+    ctx.restore();
+  }
 
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    ctx.globalAlpha = alpha;
-    ctx.shadowColor = 'rgba(10, 48, 96, 0.22)';
-    ctx.shadowBlur = 10;
+  private drawCrispDinhHinh(
+    ctx: CanvasRenderingContext2D,
+    headlineMode: HeadlineMode
+  ): void {
+    if (typeof Path2D === 'undefined') return;
+    if (!this.dinhHinhPath) {
+      this.dinhHinhPath = buildDinhHinhVectorPath();
+    }
+
+    ctx.save();
+
+    if (headlineMode === 'rise-loop' || headlineMode === 'rise-hold') {
+      const startDelay = 0.08;
+      const riseDuration = 1.42;
+      const rawProgress = clamp((this.headlineElapsed - startDelay) / riseDuration, 0, 1);
+      if (rawProgress <= 0) {
+        ctx.restore();
+        return;
+      }
+      const eased = easeOutSilk(rawProgress);
+      const offsetY = (1 - eased) * 232;
+      const dotReveal = clamp((34 - offsetY) / 24, 0, 1);
+      const dotBottomY = lerp(396, 416, dotReveal);
+
+      ctx.beginPath();
+      ctx.moveTo(460, 158);
+      ctx.lineTo(1460, 158);
+      ctx.lineTo(1460, 396);
+      ctx.lineTo(660, 396);
+      ctx.lineTo(660, dotBottomY);
+      ctx.lineTo(614, dotBottomY);
+      ctx.lineTo(614, 396);
+      ctx.lineTo(460, 396);
+      ctx.closePath();
+      ctx.clip();
+
+      ctx.globalAlpha = clamp(rawProgress / 0.26, 0, 1);
+      ctx.translate(0, offsetY);
+    }
+
+    // Crisp, vector-rendered "#FED84D" headline with subtle editorial depth shadow
+    ctx.shadowColor = 'rgba(10, 48, 96, 0.24)';
+    ctx.shadowBlur = 9;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 4;
-
-    ctx.drawImage(
-      dinhHinhSprite,
-      DINH_HINH_X,
-      DINH_HINH_Y + offsetY,
-      DINH_HINH_W,
-      DINH_HINH_H
-    );
+    ctx.fillStyle = '#FED84D';
+    ctx.fill(this.dinhHinhPath, 'nonzero');
 
     ctx.restore();
   }

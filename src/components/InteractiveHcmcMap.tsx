@@ -56,6 +56,7 @@ export function InteractiveHcmcMap() {
 
   // Animation refs driven strictly by requestAnimationFrame
   const progressRef = useRef(0);
+  const visualsProgressRef = useRef(0);
   const pulseClockRef = useRef(0);
   const isPlayingRef = useRef(false);
   const autoCameraRef = useRef(true);
@@ -327,6 +328,7 @@ export function InteractiveHcmcMap() {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'map-pole-pin';
+      btn.dataset.side = pole.labelSide;
       btn.setAttribute('aria-label', pole.title);
       btn.innerHTML = `
         <span class="pole-pin-inner" style="--pole-accent:${pole.accentColor}">
@@ -337,6 +339,10 @@ export function InteractiveHcmcMap() {
               <circle cx="16" cy="14.5" r="5" fill="#FFFFFF"/>
               <circle cx="16" cy="14.5" r="2.2" fill="${pole.accentColor}"/>
             </svg>
+          </span>
+          <span class="pole-name-tag pole-name-${pole.labelSide}">
+            <span class="pole-name-dot" style="background:${pole.accentColor}"></span>
+            <span class="pole-name-text">${pole.title}</span>
           </span>
         </span>
       `;
@@ -427,7 +433,7 @@ export function InteractiveHcmcMap() {
     return () => observer.disconnect();
   }, [hasAutoStarted]);
 
-  // Main 60fps requestAnimationFrame loop driving camera flight, progressive routes & moving pulses
+  // Main 60fps requestAnimationFrame loop driving continuous 5-pole auto-zoom tour & animations
   useEffect(() => {
     let rafId = 0;
     let lastTs = performance.now();
@@ -438,9 +444,11 @@ export function InteractiveHcmcMap() {
 
       pulseClockRef.current += dt;
 
-      if (isPlayingRef.current) {
-        const nextP = Math.min(1, progressRef.current + dt / TIMELINE_DURATION_SEC);
+      // Pause auto-camera gently while the user hovers a growth pole so the tooltip stays rock-steady
+      if (isPlayingRef.current && !activePoleRef.current) {
+        const nextP = (progressRef.current + dt / TIMELINE_DURATION_SEC) % 1;
         progressRef.current = nextP;
+        visualsProgressRef.current = Math.min(1, visualsProgressRef.current + dt / 18);
 
         if (autoCameraRef.current && mapRef.current && mapLoadedRef.current) {
           const cam = interpolateCamera(nextP);
@@ -451,13 +459,9 @@ export function InteractiveHcmcMap() {
             bearing: cam.bearing,
           });
         }
-
-        if (nextP >= 1) {
-          isPlayingRef.current = false;
-        }
       }
 
-      syncMapVisuals(progressRef.current, pulseClockRef.current);
+      syncMapVisuals(visualsProgressRef.current, pulseClockRef.current);
       rafId = requestAnimationFrame(tick);
     };
 
@@ -477,7 +481,7 @@ export function InteractiveHcmcMap() {
         <h2 className="text-sm sm:text-base lg:text-[18px] font-bold uppercase tracking-[0.06em] text-white leading-relaxed text-center">
           5 cực động lực trong dự thảo Quy hoạch tổng thể TPHCM
           <br />
-          giai đoạn 2025-2050, tầm nhìn 100 năm.
+          giai đoạn 2025-2050, tầm nhìn 100 năm
         </h2>
       </div>
 

@@ -24,6 +24,7 @@ export interface GrowthPole {
   description: string;
   coords: [number, number]; // [lng, lat]
   accentColor: string;
+  labelSide: 'left' | 'right' | 'top' | 'bottom';
 }
 
 export interface TransportRoute {
@@ -492,6 +493,7 @@ export const GROWTH_POLES: GrowthPole[] = [
       'Tập trung tại Sài Gòn - Chợ Lớn - Thủ Thiêm, là trung tâm tài chính quốc tế, quản trị, thương mại, dịch vụ, du lịch, văn hóa, công viên chuyên đề tầm cỡ quốc tế và kinh tế sáng tạo; ưu tiên tái thiết, bảo tồn di sản.',
     coords: uvToLngLat(0.386, 0.573),
     accentColor: '#EA580C',
+    labelSide: 'bottom',
   },
   {
     id: 'pole-east-northeast',
@@ -500,6 +502,7 @@ export const GROWTH_POLES: GrowthPole[] = [
       'Kết nối Thủ Đức, Dĩ An, Thuận An, Bình Dương, Tân Uyên với sân bay Long Thành, tập trung công nghệ cao, AI, bán dẫn và giáo dục đại học.',
     coords: uvToLngLat(0.474, 0.509),
     accentColor: '#0284C7',
+    labelSide: 'right',
   },
   {
     id: 'pole-north',
@@ -508,6 +511,7 @@ export const GROWTH_POLES: GrowthPole[] = [
       'Phát triển tại Bến Cát, Bàu Bàng và vùng phụ cận, chuyển các KCN đơn chức năng thành hệ sinh thái công nghiệp, logistics, đô thị và dịch vụ.',
     coords: uvToLngLat(0.368, 0.326),
     accentColor: '#E11D48',
+    labelSide: 'right',
   },
   {
     id: 'pole-south',
@@ -516,6 +520,7 @@ export const GROWTH_POLES: GrowthPole[] = [
       'Kết nối Châu Đức, Long Sơn, Phú Mỹ, Vũng Tàu và Cần Giờ, phát huy thế mạnh cảng biển, logistics, hàng hải, thương mại tự do và năng lượng.',
     coords: uvToLngLat(0.562, 0.808),
     accentColor: '#D97706',
+    labelSide: 'top',
   },
   {
     id: 'pole-west',
@@ -524,87 +529,94 @@ export const GROWTH_POLES: GrowthPole[] = [
       'Phát triển các khu đô thị đồng bộ, trung tâm đào tạo và y tế chuyên sâu, triển lãm và dịch vụ, giảm áp lực cho khu vực lõi.',
     coords: uvToLngLat(0.246, 0.562),
     accentColor: '#2563EB',
+    labelSide: 'left',
   },
 ];
 
 // ---------------------------------------------------------------------------
-// 5. TIMELINE STORY CHAPTERS & CAMERA CHOREOGRAPHY (0.0 -> 1.0 over 24s)
+// 5. TIMELINE STORY CHAPTERS & CAMERA CHOREOGRAPHY (SEAMLESS 5-POLE AUTO-ZOOM)
 //    Strictly upright (pitch: 0, bearing: 0) with zero distortion
 // ---------------------------------------------------------------------------
 
-export const TIMELINE_DURATION_SEC = 24;
+export const TIMELINE_DURATION_SEC = 32;
 
 export const TIMELINE_CHAPTERS: TimelineChapter[] = [
   {
     id: 'ch-overview',
-    label: 'Bay xuống Siêu đô thị',
+    label: 'Toàn cảnh 5 cực động lực',
     shortLabel: '1. Toàn cảnh',
     start: 0.0,
-    end: 0.18,
+    end: 0.1,
     description:
-      'Camera bay từ góc nhìn toàn cảnh xuống bản đồ 5 cực động lực trong dự thảo Quy hoạch tổng thể TPHCM 2025–2050.',
+      'Toàn cảnh bản đồ 5 cực động lực trong dự thảo Quy hoạch tổng thể TPHCM giai đoạn 2025-2050, tầm nhìn 100 năm.',
   },
   {
-    id: 'ch-borders',
-    label: 'Bốn hướng giáp ranh',
-    shortLabel: '2. Tứ cận',
-    start: 0.18,
-    end: 0.35,
+    id: 'ch-north',
+    label: 'Cực công nghiệp - logistics phía Bắc',
+    shortLabel: '2. Cực Bắc',
+    start: 0.1,
+    end: 0.28,
     description:
-      'Đông giáp TP Đồng Nai & Lâm Đồng; Tây giáp Tây Ninh & Đồng Tháp; Bắc giáp Tây Ninh & TP Đồng Nai; Nam giáp Đồng Tháp & Biển Đông.',
+      'Phát triển tại Bến Cát, Bàu Bàng và vùng phụ cận thành hệ sinh thái công nghiệp, logistics, đô thị và dịch vụ.',
   },
   {
-    id: 'ch-core-north',
-    label: 'Cực Bắc, Cực Tây, Lõi Trung tâm & Cực Đông',
-    shortLabel: '3. 4 Cực đất liền',
-    start: 0.35,
-    end: 0.56,
+    id: 'ch-east',
+    label: 'Cực đổi mới sáng tạo phía Đông, Đông Bắc',
+    shortLabel: '3. Cực Đông',
+    start: 0.28,
+    end: 0.45,
     description:
-      'Kết nối đồng bộ Cực công nghiệp phía Bắc, Cực đô thị phía Tây, Cực lõi trung tâm và Cực đổi mới sáng tạo phía Đông hướng sân bay Long Thành.',
+      'Kết nối Thủ Đức, Dĩ An, Thuận An, Bình Dương, Tân Uyên với sân bay Long Thành, tập trung công nghệ cao, AI và bán dẫn.',
   },
   {
-    id: 'ch-coastal',
-    label: 'Cực cảng biển – năng lượng phía Nam',
-    shortLabel: '4. Cực phía Nam',
-    start: 0.56,
-    end: 0.77,
+    id: 'ch-core',
+    label: 'Cực lõi trung tâm',
+    shortLabel: '4. Lõi Trung tâm',
+    start: 0.45,
+    end: 0.62,
     description:
-      'Phát huy cụm cảng biển, thương mại tự do, logistics hàng hải và công nghiệp năng lượng Cần Giờ – Phú Mỹ – Long Sơn – Vũng Tàu – Châu Đức.',
+      'Tập trung tại Sài Gòn - Chợ Lớn - Thủ Thiêm, trung tâm tài chính quốc tế, thương mại, văn hóa và kinh tế sáng tạo.',
   },
   {
-    id: 'ch-condao',
-    label: 'Đặc khu Côn Đảo',
-    shortLabel: '5. Côn Đảo',
-    start: 0.77,
-    end: 0.91,
+    id: 'ch-west',
+    label: 'Cực đô thị, giáo dục, y tế phía Tây',
+    shortLabel: '5. Cực Tây',
+    start: 0.62,
+    end: 0.78,
     description:
-      'Mở rộng tầm nhìn hướng biển theo tuyến hàng hải và hàng không kết nối trực tiếp Đặc khu Côn Đảo trên Biển Đông.',
+      'Phát triển các khu đô thị đồng bộ, trung tâm đào tạo và y tế chuyên sâu, triển lãm và dịch vụ.',
   },
   {
-    id: 'ch-finale',
-    label: 'Tổng thể 5 cực động lực',
-    shortLabel: '6. Tổng thể',
-    start: 0.91,
+    id: 'ch-south',
+    label: 'Cực cảng biển - năng lượng phía Nam',
+    shortLabel: '6. Cực Nam',
+    start: 0.78,
     end: 1.0,
     description:
-      'Toàn cảnh 5 cực động lực trong dự thảo Quy hoạch tổng thể TPHCM giai đoạn 2025-2050, tầm nhìn 100 năm.',
+      'Kết nối Châu Đức, Long Sơn, Phú Mỹ, Vũng Tàu và Cần Giờ, phát huy thế mạnh cảng biển, thương mại tự do và năng lượng.',
   },
 ];
 
 export const CAMERA_KEYFRAMES: CameraKeyframe[] = [
-  // Straight panoramic top-down overview before zooming smoothly onto the 5-pole map
-  { t: 0.0, center: uvToLngLat(0.5, 0.5), zoom: 7.45, pitch: 0, bearing: 0 },
-  // Smooth zoom-in framing the complete 5-pole map straight & undistorted
-  { t: 0.18, center: uvToLngLat(0.5, 0.5), zoom: 8.05, pitch: 0, bearing: 0 },
-  // Balanced full-frame straight view highlighting all 4 compass borders
-  { t: 0.34, center: uvToLngLat(0.5, 0.5), zoom: 8.02, pitch: 0, bearing: 0 },
-  // Zoom smoothly onto North, West, Core, and East Innovation poles
-  { t: 0.48, center: uvToLngLat(0.39, 0.47), zoom: 8.82, pitch: 0, bearing: 0 },
-  // Glide southeast across South Seaport & Energy pole (Can Gio - Phu My - Vung Tau)
-  { t: 0.68, center: uvToLngLat(0.58, 0.72), zoom: 8.88, pitch: 0, bearing: 0 },
-  // Glide toward maritime corridor & Con Dao Special Zone
-  { t: 0.85, center: uvToLngLat(0.74, 0.8), zoom: 8.95, pitch: 0, bearing: 0 },
-  // Grand closing full-frame upright view of all 5 growth poles
+  // Full overview of all 5 growth poles (matches t = 1.0 for seamless looping)
+  { t: 0.0, center: uvToLngLat(0.5, 0.5), zoom: 8.05, pitch: 0, bearing: 0 },
+  { t: 0.07, center: uvToLngLat(0.5, 0.5), zoom: 8.05, pitch: 0, bearing: 0 },
+  // 1. Auto-zoom onto Cực công nghiệp - logistics phía Bắc
+  { t: 0.16, center: uvToLngLat(0.41, 0.33), zoom: 9.2, pitch: 0, bearing: 0 },
+  { t: 0.24, center: uvToLngLat(0.41, 0.33), zoom: 9.25, pitch: 0, bearing: 0 },
+  // 2. Glide & zoom onto Cực đổi mới sáng tạo phía Đông, Đông Bắc
+  { t: 0.33, center: uvToLngLat(0.51, 0.51), zoom: 9.3, pitch: 0, bearing: 0 },
+  { t: 0.41, center: uvToLngLat(0.51, 0.51), zoom: 9.35, pitch: 0, bearing: 0 },
+  // 3. Glide & zoom onto Cực lõi trung tâm
+  { t: 0.5, center: uvToLngLat(0.39, 0.59), zoom: 9.4, pitch: 0, bearing: 0 },
+  { t: 0.58, center: uvToLngLat(0.39, 0.59), zoom: 9.44, pitch: 0, bearing: 0 },
+  // 4. Glide & zoom onto Cực đô thị, giáo dục, y tế phía Tây
+  { t: 0.67, center: uvToLngLat(0.24, 0.56), zoom: 9.3, pitch: 0, bearing: 0 },
+  { t: 0.74, center: uvToLngLat(0.24, 0.56), zoom: 9.35, pitch: 0, bearing: 0 },
+  // 5. Glide & zoom onto Cực cảng biển - thương mại tự do - công nghiệp năng lượng phía Nam
+  { t: 0.83, center: uvToLngLat(0.59, 0.76), zoom: 9.2, pitch: 0, bearing: 0 },
+  { t: 0.91, center: uvToLngLat(0.59, 0.76), zoom: 9.25, pitch: 0, bearing: 0 },
+  // Pull back smoothly to full overview of all 5 poles
   { t: 1.0, center: uvToLngLat(0.5, 0.5), zoom: 8.05, pitch: 0, bearing: 0 },
 ];
 

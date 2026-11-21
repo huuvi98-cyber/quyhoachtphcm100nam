@@ -1355,13 +1355,13 @@ export function HcmcMasterPlanReport() {
           <div>
             <div className="text-base font-bold text-slate-800">5 Cực động lực phát triển</div>
           </div>
-          <div className="text-5xl font-black font-display text-energy huge-num tabular-nums" data-countup>05</div>
+          <div className="text-5xl font-black font-display text-energy huge-num tabular-nums" data-countup>5</div>
         </a>
         <a className="p-5 rounded-2xl bg-white border-2 border-mint hover:shadow-lg hover:shadow-mint/10 transition-all flex items-center justify-between group" href="#sub-5vetinh">
           <div>
             <div className="text-base font-bold text-slate-800">5 Trung tâm vệ tinh</div>
           </div>
-          <div className="text-5xl font-black font-display text-mint huge-num tabular-nums" data-countup>05</div>
+          <div className="text-5xl font-black font-display text-mint huge-num tabular-nums" data-countup>5</div>
         </a>
         <a className="p-5 rounded-2xl bg-white border-2 border-sun hover:shadow-lg hover:shadow-sun/15 transition-all flex items-center justify-between group" href="#sub-10vung">
           <div>
@@ -1387,7 +1387,7 @@ export function HcmcMasterPlanReport() {
                   <img alt="Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm" className="absolute inset-0 w-full h-full object-cover" src="/report-images/tphcm-1.jpg" title="Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
-                    <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm</h4>
+                    <h4 className="text-2xl font-black font-display text-white leading-tight drop-shadow-md">Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm</h4>
                     <div className="inline-flex items-center gap-2 bg-slate-900 hover:bg-sky-600 text-white font-bold text-sm rounded-xl px-3 py-1.5 transition-all shadow-sm">
                       <span>Lật xem</span>
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"></path></svg>
@@ -1414,7 +1414,7 @@ export function HcmcMasterPlanReport() {
                   <img alt="Sân bay Long Thành và cực đổi mới sáng tạo phía Đông" className="absolute inset-0 w-full h-full object-cover" src="/report-images/san-bay-long-thanh.jpg" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
-                    <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực đổi mới sáng tạo phía Đông, Đông Bắc</h4>
+                    <h4 className="text-2xl font-black font-display text-white leading-tight drop-shadow-md">Cực đổi mới sáng tạo phía Đông, Đông Bắc</h4>
                     <div className="inline-flex items-center gap-2 bg-slate-900 hover:bg-sky-600 text-white font-bold text-sm rounded-xl px-3 py-1.5 transition-all shadow-sm">
                       <span>Lật xem</span>
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"></path></svg>
@@ -1441,7 +1441,7 @@ export function HcmcMasterPlanReport() {
                   <img alt="Bàu Bàng - Cực công nghiệp logistics phía Bắc" className="absolute inset-0 w-full h-full object-cover" src="/report-images/bau-bang.jpg" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
-                    <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực công nghiệp - logistics phía Bắc</h4>
+                    <h4 className="text-2xl font-black font-display text-white leading-tight drop-shadow-md">Cực công nghiệp - logistics phía Bắc</h4>
                     <div className="inline-flex items-center gap-2 bg-slate-900 hover:bg-sky-600 text-white font-bold text-sm rounded-xl px-3 py-1.5 transition-all shadow-sm">
                       <span>Lật xem</span>
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"></path></svg>
@@ -1468,7 +1468,7 @@ export function HcmcMasterPlanReport() {
                   <img alt="Vũng Tàu - Cần Giờ - Cực kinh tế biển phía Nam" className="absolute inset-0 w-full h-full object-cover" src="/report-images/vung-tau.jpg" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
-                    <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực cảng biển - thương mại tự do - công nghiệp năng lượng phía Nam</h4>
+                    <h4 className="text-2xl font-black font-display text-white leading-tight drop-shadow-md">Cực cảng biển - thương mại tự do - công nghiệp năng lượng phía Nam</h4>
                     <div className="inline-flex items-center gap-2 bg-slate-900 hover:bg-sky-600 text-white font-bold text-sm rounded-xl px-3 py-1.5 transition-all shadow-sm">
                       <span>Lật xem</span>
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"></path></svg>
@@ -1495,7 +1495,7 @@ export function HcmcMasterPlanReport() {
                   <img alt="Trung tâm y tế chuyên sâu, giáo dục phía Tây" className="absolute inset-0 w-full h-full object-cover" src="/report-images/y-te.jpg" title="Cực đô thị, giáo dục, y tế phía Tây" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
-                    <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực đô thị, giáo dục, y tế phía Tây</h4>
+                    <h4 className="text-2xl font-black font-display text-white leading-tight drop-shadow-md">Cực đô thị, giáo dục, y tế phía Tây</h4>
                     <div className="inline-flex items-center gap-2 bg-slate-900 hover:bg-sky-600 text-white font-bold text-sm rounded-xl px-3 py-1.5 transition-all shadow-sm">
                       <span>Lật xem</span>
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"></path></svg>

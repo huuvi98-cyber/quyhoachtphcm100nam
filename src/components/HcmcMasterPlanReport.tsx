@@ -1380,11 +1380,11 @@ export function HcmcMasterPlanReport() {
         <div className="w-full">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Cực 1: Cực lõi trung tâm */}
-            <div className="flip-card group h-[380px] [perspective:1000px] cursor-pointer">
-              <div className="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-md hover:shadow-2xl rounded-3xl">
+            <div className="flip-card group h-[380px] cursor-pointer">
+              <div className="flip-card-inner shadow-md hover:shadow-2xl rounded-3xl">
                 {/* Front Side */}
-                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
-                  <img alt="Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/report-images/tphcm-1.jpg" title="Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm" />
+                <div className="flip-card-front rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
+                  <img alt="Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm" className="absolute inset-0 w-full h-full object-cover" src="/report-images/tphcm-1.jpg" title="Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
                     <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm</h4>
@@ -1395,7 +1395,7 @@ export function HcmcMasterPlanReport() {
                   </div>
                 </div>
                 {/* Back Side */}
-                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-3xl border-2 border-sun bg-white p-6 flex flex-col justify-between text-slate-900 overflow-hidden">
+                <div className="flip-card-back rounded-3xl border-2 border-sun bg-white p-6 flex flex-col justify-between text-slate-900 overflow-hidden">
                   <div className="space-y-3 overflow-y-auto pr-1">
                     <h4 className="text-xl font-black font-display text-slate-900 leading-snug">Cực lõi trung tâm</h4>
                     <p className="text-base text-slate-600 leading-relaxed">
@@ -1407,11 +1407,11 @@ export function HcmcMasterPlanReport() {
             </div>
 
             {/* Cực 2: Cực đổi mới sáng tạo */}
-            <div className="flip-card group h-[380px] [perspective:1000px] cursor-pointer">
-              <div className="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-md hover:shadow-2xl rounded-3xl">
+            <div className="flip-card group h-[380px] cursor-pointer">
+              <div className="flip-card-inner shadow-md hover:shadow-2xl rounded-3xl">
                 {/* Front Side */}
-                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
-                  <img alt="Sân bay Long Thành và cực đổi mới sáng tạo phía Đông" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/report-images/san-bay-long-thanh.jpg" />
+                <div className="flip-card-front rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
+                  <img alt="Sân bay Long Thành và cực đổi mới sáng tạo phía Đông" className="absolute inset-0 w-full h-full object-cover" src="/report-images/san-bay-long-thanh.jpg" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
                     <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực đổi mới sáng tạo phía Đông, Đông Bắc</h4>
@@ -1422,7 +1422,7 @@ export function HcmcMasterPlanReport() {
                   </div>
                 </div>
                 {/* Back Side */}
-                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-3xl border-2 border-cobalt bg-white p-6 flex flex-col justify-between text-slate-900 overflow-hidden">
+                <div className="flip-card-back rounded-3xl border-2 border-cobalt bg-white p-6 flex flex-col justify-between text-slate-900 overflow-hidden">
                   <div className="space-y-3 overflow-y-auto pr-1">
                     <h4 className="text-xl font-black font-display text-slate-900 leading-snug">Cực đổi mới sáng tạo phía Đông, Đông Bắc</h4>
                     <p className="text-base text-slate-600 leading-relaxed">
@@ -1434,11 +1434,11 @@ export function HcmcMasterPlanReport() {
             </div>
 
             {/* Cực 3: Cực công nghiệp - logistics */}
-            <div className="flip-card group h-[380px] [perspective:1000px] cursor-pointer">
-              <div className="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-md hover:shadow-2xl rounded-3xl">
+            <div className="flip-card group h-[380px] cursor-pointer">
+              <div className="flip-card-inner shadow-md hover:shadow-2xl rounded-3xl">
                 {/* Front Side */}
-                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
-                  <img alt="Bàu Bàng - Cực công nghiệp logistics phía Bắc" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/report-images/bau-bang.jpg" />
+                <div className="flip-card-front rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
+                  <img alt="Bàu Bàng - Cực công nghiệp logistics phía Bắc" className="absolute inset-0 w-full h-full object-cover" src="/report-images/bau-bang.jpg" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
                     <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực công nghiệp - logistics phía Bắc</h4>
@@ -1449,7 +1449,7 @@ export function HcmcMasterPlanReport() {
                   </div>
                 </div>
                 {/* Back Side */}
-                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-3xl border-2 border-energy bg-white p-6 flex flex-col justify-between text-slate-900 overflow-hidden">
+                <div className="flip-card-back rounded-3xl border-2 border-energy bg-white p-6 flex flex-col justify-between text-slate-900 overflow-hidden">
                   <div className="space-y-3 overflow-y-auto pr-1">
                     <h4 className="text-xl font-black font-display text-slate-900 leading-snug">Cực công nghiệp - logistics phía Bắc</h4>
                     <p className="text-base text-slate-600 leading-relaxed">
@@ -1461,11 +1461,11 @@ export function HcmcMasterPlanReport() {
             </div>
 
             {/* Cực 4: Cực cảng biển - thương mại tự do */}
-            <div className="flip-card group h-[380px] [perspective:1000px] cursor-pointer">
-              <div className="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-md hover:shadow-2xl rounded-3xl">
+            <div className="flip-card group h-[380px] cursor-pointer">
+              <div className="flip-card-inner shadow-md hover:shadow-2xl rounded-3xl">
                 {/* Front Side */}
-                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
-                  <img alt="Vũng Tàu - Cần Giờ - Cực kinh tế biển phía Nam" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/report-images/vung-tau.jpg" />
+                <div className="flip-card-front rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
+                  <img alt="Vũng Tàu - Cần Giờ - Cực kinh tế biển phía Nam" className="absolute inset-0 w-full h-full object-cover" src="/report-images/vung-tau.jpg" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
                     <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực cảng biển - thương mại tự do - công nghiệp năng lượng phía Nam</h4>
@@ -1476,7 +1476,7 @@ export function HcmcMasterPlanReport() {
                   </div>
                 </div>
                 {/* Back Side */}
-                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-3xl border-2 border-ice bg-white p-6 flex flex-col justify-between text-slate-900 overflow-hidden">
+                <div className="flip-card-back rounded-3xl border-2 border-ice bg-white p-6 flex flex-col justify-between text-slate-900 overflow-hidden">
                   <div className="space-y-3 overflow-y-auto pr-1">
                     <h4 className="text-xl font-black font-display text-slate-900 leading-snug">Cực cảng biển - thương mại tự do - công nghiệp năng lượng phía Nam</h4>
                     <p className="text-base text-slate-600 leading-relaxed">
@@ -1488,11 +1488,11 @@ export function HcmcMasterPlanReport() {
             </div>
 
             {/* Cực 5: Cực đô thị, giáo dục, y tế */}
-            <div className="flip-card group h-[380px] [perspective:1000px] cursor-pointer sm:col-span-2 lg:col-span-1">
-              <div className="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-md hover:shadow-2xl rounded-3xl">
+            <div className="flip-card group h-[380px] cursor-pointer sm:col-span-2 lg:col-span-1">
+              <div className="flip-card-inner shadow-md hover:shadow-2xl rounded-3xl">
                 {/* Front Side */}
-                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
-                  <img alt="Trung tâm y tế chuyên sâu, giáo dục phía Tây" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/report-images/y-te.jpg" title="Cực đô thị, giáo dục, y tế phía Tây" />
+                <div className="flip-card-front rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
+                  <img alt="Trung tâm y tế chuyên sâu, giáo dục phía Tây" className="absolute inset-0 w-full h-full object-cover" src="/report-images/y-te.jpg" title="Cực đô thị, giáo dục, y tế phía Tây" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
                     <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực đô thị, giáo dục, y tế phía Tây</h4>
@@ -1503,7 +1503,7 @@ export function HcmcMasterPlanReport() {
                   </div>
                 </div>
                 {/* Back Side */}
-                <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-3xl border-2 border-mint bg-white p-6 flex flex-col justify-between text-slate-900 overflow-hidden">
+                <div className="flip-card-back rounded-3xl border-2 border-mint bg-white p-6 flex flex-col justify-between text-slate-900 overflow-hidden">
                   <div className="space-y-3 overflow-y-auto pr-1">
                     <h4 className="text-xl font-black font-display text-slate-900 leading-snug">Cực đô thị, giáo dục, y tế phía Tây</h4>
                     <p className="text-base text-slate-600 leading-relaxed">

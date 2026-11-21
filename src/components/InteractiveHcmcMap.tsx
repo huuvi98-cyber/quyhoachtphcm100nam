@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as maplibregl from 'maplibre-gl';
+import { Maximize2, TrendingUp, Users, X } from 'lucide-react';
 import {
   GROWTH_POLES,
   HCMC_BOUNDARY_GEOJSON,
@@ -14,6 +15,12 @@ import {
   interpolateCamera,
   type GrowthPole,
 } from '../data/hcmcMapData';
+
+import {
+  AnimatedMapInfoGraphic,
+  MAP_INFO_CARDS,
+  type MapInfoKey,
+} from './AnimatedMapInfoGraphic';
 
 function createOfficialMapStyle(): maplibregl.StyleSpecification {
   return {
@@ -68,6 +75,37 @@ export function InteractiveHcmcMap() {
     y: number;
   } | null>(null);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
+  const [dismissedInfo, setDismissedInfo] = useState<Record<MapInfoKey, boolean>>({
+    population: false,
+    economy: false,
+  });
+  const [restoredInfo, setRestoredInfo] = useState<Record<MapInfoKey, boolean>>({
+    population: false,
+    economy: false,
+  });
+  const [expandedInfo, setExpandedInfo] = useState<MapInfoKey | null>(null);
+  const expandedInfoRef = useRef<MapInfoKey | null>(null);
+
+  useEffect(() => {
+    expandedInfoRef.current = expandedInfo;
+    if (!expandedInfo) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setExpandedInfo(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [expandedInfo]);
+
+  const dismissInfoCard = useCallback((key: MapInfoKey) => {
+    setDismissedInfo((prev) => ({ ...prev, [key]: true }));
+  }, []);
+
+  const restoreInfoCard = useCallback((key: MapInfoKey) => {
+    setRestoredInfo((prev) => ({ ...prev, [key]: true }));
+    setDismissedInfo((prev) => ({ ...prev, [key]: false }));
+  }, []);
 
   // Attach all GeoJSON sources and WebGL layers onto the MapLibre instance
   const attachGeoJsonLayers = useCallback((map: maplibregl.Map) => {
@@ -444,8 +482,8 @@ export function InteractiveHcmcMap() {
 
       pulseClockRef.current += dt;
 
-      // Pause auto-camera gently while the user hovers a growth pole so the tooltip stays rock-steady
-      if (isPlayingRef.current && !activePoleRef.current) {
+      // Pause auto-camera gently while the user hovers a growth pole or inspects an enlarged info box
+      if (isPlayingRef.current && !activePoleRef.current && !expandedInfoRef.current) {
         const nextP = (progressRef.current + dt / TIMELINE_DURATION_SEC) % 1;
         progressRef.current = nextP;
         visualsProgressRef.current = Math.min(1, visualsProgressRef.current + dt / 18);
@@ -475,16 +513,6 @@ export function InteractiveHcmcMap() {
       aria-label="Bản đồ động Quy hoạch tổng thể TP.HCM 2025-2050"
       className="w-[92%] sm:w-[88%] lg:w-[82%] max-w-[1460px] mx-auto mt-10 md:mt-14 lg:mt-16"
     >
-      {/* Editorial Section Header */}
-      <div className="mb-5 md:mb-6 flex flex-col items-center text-center">
-        <span aria-hidden="true" className="w-14 sm:w-16 h-[2px] bg-[#FED84D] mb-3.5" />
-        <h2 className="text-sm sm:text-base lg:text-[18px] font-bold uppercase tracking-[0.06em] text-white leading-relaxed text-center">
-          5 cực động lực trong dự thảo Quy hoạch tổng thể TPHCM
-          <br />
-          giai đoạn 2025-2050, tầm nhìn 100 năm
-        </h2>
-      </div>
-
       {/* Main Interactive Map Stage (transparent, no outer white box background) */}
       <figure className="m-0">
         <div className="relative w-full overflow-hidden">
@@ -492,6 +520,111 @@ export function InteractiveHcmcMap() {
             ref={mapContainerRef}
             className="relative w-full h-[520px] sm:h-[600px] lg:h-[680px] map-theme-official"
           />
+
+          {/* Pop-up Infographic Column on Right Side: Population Scale (top) above Economy & Digital Economy (bottom) */}
+          <div className="hidden sm:flex flex-col items-end gap-3 sm:gap-3.5 absolute top-3 right-3 sm:top-4 sm:right-4 z-20 pointer-events-none">
+            {/* 1. Population Scale (above Economy) */}
+            {hasAutoStarted && !dismissedInfo.population && (
+              <div
+                className={`pointer-events-auto relative group w-[250px] md:w-[295px] lg:w-[340px] xl:w-[370px] rounded-2xl bg-white p-1.5 sm:p-2 border border-[#FED84D]/80 shadow-[0_18px_42px_rgba(4,28,72,0.42)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_48px_rgba(4,28,72,0.52)] ${
+                  restoredInfo.population ? 'map-info-pop-instant' : 'map-info-pop'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setExpandedInfo('population')}
+                  aria-label="Phóng to thông tin Quy mô dân số"
+                  className="block w-full rounded-xl overflow-hidden cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#083D88]"
+                >
+                  <AnimatedMapInfoGraphic
+                    kind="population"
+                    startDelayMs={restoredInfo.population ? 120 : 580}
+                    className="block w-full h-auto"
+                  />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExpandedInfo('population')}
+                  aria-label="Xem lớn thông tin Quy mô dân số"
+                  className="pointer-events-auto absolute bottom-2.5 right-2.5 flex items-center justify-center w-6 h-6 rounded-full bg-[#083D88]/85 text-white opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity duration-150 hover:bg-[#052960] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
+                >
+                  <Maximize2 className="w-3 h-3" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dismissInfoCard('population');
+                  }}
+                  aria-label="Ẩn bảng thông tin Quy mô dân số"
+                  className="pointer-events-auto absolute -top-2 -right-2 flex items-center justify-center w-6 h-6 rounded-full bg-[#083D88] text-white border border-[#FED84D]/85 shadow-md hover:bg-[#052960] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
+                >
+                  <X className="w-3.5 h-3.5" aria-hidden="true" />
+                </button>
+              </div>
+            )}
+            {hasAutoStarted && dismissedInfo.population && (
+              <button
+                type="button"
+                onClick={() => restoreInfoCard('population')}
+                className="pointer-events-auto inline-flex items-center gap-1.5 rounded-xl bg-[#083D88]/95 border border-[#FED84D]/75 px-3 py-1.5 text-xs font-semibold text-white shadow-[0_10px_24px_rgba(4,28,72,0.4)] hover:border-[#FED84D] hover:bg-[#063270] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
+              >
+                <Users className="w-3.5 h-3.5 text-[#FED84D]" aria-hidden="true" />
+                <span>Quy mô dân số</span>
+              </button>
+            )}
+
+            {/* 2. Economy & Digital Economy (below Population) */}
+            {hasAutoStarted && !dismissedInfo.economy && (
+              <div
+                className={`pointer-events-auto relative group w-[250px] md:w-[295px] lg:w-[340px] xl:w-[370px] rounded-2xl bg-white p-1.5 sm:p-2 border border-[#FED84D]/80 shadow-[0_18px_42px_rgba(4,28,72,0.42)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_48px_rgba(4,28,72,0.52)] ${
+                  restoredInfo.economy ? 'map-info-pop-instant' : 'map-info-pop-delayed'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setExpandedInfo('economy')}
+                  aria-label="Phóng to thông tin Kinh tế và Kinh tế số"
+                  className="block w-full rounded-xl overflow-hidden cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#083D88]"
+                >
+                  <AnimatedMapInfoGraphic
+                    kind="economy"
+                    startDelayMs={restoredInfo.economy ? 120 : 1080}
+                    className="block w-full h-auto"
+                  />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExpandedInfo('economy')}
+                  aria-label="Xem lớn thông tin Kinh tế"
+                  className="pointer-events-auto absolute bottom-2.5 right-2.5 flex items-center justify-center w-6 h-6 rounded-full bg-[#083D88]/85 text-white opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity duration-150 hover:bg-[#052960] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
+                >
+                  <Maximize2 className="w-3 h-3" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dismissInfoCard('economy');
+                  }}
+                  aria-label="Ẩn bảng thông tin Kinh tế"
+                  className="pointer-events-auto absolute -top-2 -right-2 flex items-center justify-center w-6 h-6 rounded-full bg-[#083D88] text-white border border-[#FED84D]/85 shadow-md hover:bg-[#052960] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
+                >
+                  <X className="w-3.5 h-3.5" aria-hidden="true" />
+                </button>
+              </div>
+            )}
+            {hasAutoStarted && dismissedInfo.economy && (
+              <button
+                type="button"
+                onClick={() => restoreInfoCard('economy')}
+                className="pointer-events-auto inline-flex items-center gap-1.5 rounded-xl bg-[#083D88]/95 border border-[#FED84D]/75 px-3 py-1.5 text-xs font-semibold text-white shadow-[0_10px_24px_rgba(4,28,72,0.4)] hover:border-[#FED84D] hover:bg-[#063270] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
+              >
+                <TrendingUp className="w-3.5 h-3.5 text-[#FED84D]" aria-hidden="true" />
+                <span>Kinh tế 2030</span>
+              </button>
+            )}
+          </div>
 
           {/* Hover Tooltip Card for the 5 Growth Pole Location Pin Icons */}
           {hoveredPole && (() => {
@@ -530,8 +663,60 @@ export function InteractiveHcmcMap() {
               </div>
             );
           })()}
+
+          {/* Enlarged Lightbox Overlay when clicking either Population or Economy info box */}
+          {expandedInfo && (
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={MAP_INFO_CARDS[expandedInfo].title}
+              onClick={() => setExpandedInfo(null)}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-[#041C48]/75 backdrop-blur-sm p-4 sm:p-6"
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="map-info-pop-instant relative w-full max-w-[min(92vw,760px)] rounded-2xl bg-white p-2 sm:p-3 border border-[#FED84D]/90 shadow-[0_28px_64px_rgba(4,20,56,0.6)]"
+              >
+                <AnimatedMapInfoGraphic
+                  kind={expandedInfo}
+                  startDelayMs={80}
+                  className="block w-full h-auto rounded-xl"
+                />
+                <button
+                  type="button"
+                  onClick={() => setExpandedInfo(null)}
+                  aria-label="Đóng khung xem lớn"
+                  className="absolute -top-3 -right-3 flex items-center justify-center w-8 h-8 rounded-full bg-[#083D88] text-white border border-[#FED84D] shadow-lg hover:bg-[#052960] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
+                >
+                  <X className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
+        {/* Mobile (< 640px) Pop-up Cards stacked cleanly beneath map canvas so every figure stays legible */}
+        {hasAutoStarted && (
+          <div className="sm:hidden grid grid-cols-1 gap-3 mt-3">
+            {(['population', 'economy'] as const).map((key, idx) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setExpandedInfo(key)}
+                aria-label={`Phóng to thông tin ${MAP_INFO_CARDS[key].title}`}
+                className={`block w-full rounded-2xl bg-white p-1.5 border border-[#FED84D]/80 shadow-[0_14px_30px_rgba(4,28,72,0.36)] text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D] ${
+                  idx === 0 ? 'map-info-pop' : 'map-info-pop-delayed'
+                }`}
+              >
+                <AnimatedMapInfoGraphic
+                  kind={key}
+                  startDelayMs={idx === 0 ? 580 : 1080}
+                  className="block w-full h-auto rounded-xl"
+                />
+              </button>
+            ))}
+          </div>
+        )}
       </figure>
     </section>
   );

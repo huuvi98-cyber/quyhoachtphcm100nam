@@ -1,4 +1,4 @@
-import { CityTriptychGallery } from './components/CityTriptychGallery';
+import { InteractiveHcmcMap } from './components/InteractiveHcmcMap';
 import { SkylinePillarsIcon } from './components/SkylinePillarsIcon';
 import { TrafficCoverStage } from './components/TrafficCoverStage';
 import { TrafficConfig } from './lib/trafficEngine';
@@ -18,7 +18,7 @@ const COVER_CONFIG: TrafficConfig = {
 
 export default function App() {
   return (
-    <main className="w-full min-h-screen bg-[#0D5CB6] flex flex-col items-center justify-start pt-5 pb-14 md:pt-6 md:pb-18 lg:pt-8 lg:pb-24 overflow-x-hidden">
+    <main className="w-full min-h-screen bg-[#0D5CB6] flex flex-col items-center justify-start pt-5 pb-16 md:pt-6 md:pb-20 lg:pt-8 lg:pb-24 overflow-x-hidden">
       <div className="w-[80%] max-w-[1536px] aspect-[5/4] md:aspect-[4/3] lg:aspect-[1920/1300]">
         <TrafficCoverStage config={COVER_CONFIG} isFullscreenView />
       </div>
@@ -34,7 +34,7 @@ export default function App() {
         </p>
       </section>
 
-      <CityTriptychGallery />
+      <InteractiveHcmcMap />
     </main>
   );
 }

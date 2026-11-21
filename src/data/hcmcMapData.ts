@@ -600,42 +600,42 @@ export const TIMELINE_CHAPTERS: TimelineChapter[] = [
 export const OVERVIEW_3D_CAMERA = {
   center: uvToLngLat(0.48, 0.53),
   zoom: 8.2,
-  pitch: 38,
-  bearing: -10,
+  pitch: 0,
+  bearing: 0,
 };
 
 export const POLE_CAMERA_TARGETS: Record<
   string,
   { center: [number, number]; zoom: number; pitch: number; bearing: number }
 > = {
-  'pole-north': { center: uvToLngLat(0.39, 0.34), zoom: 9.75, pitch: 52, bearing: 14 },
-  'pole-east-northeast': { center: uvToLngLat(0.49, 0.51), zoom: 9.9, pitch: 54, bearing: -16 },
-  'pole-core': { center: uvToLngLat(0.39, 0.58), zoom: 10.15, pitch: 56, bearing: 16 },
-  'pole-west': { center: uvToLngLat(0.26, 0.57), zoom: 9.75, pitch: 50, bearing: -15 },
-  'pole-south': { center: uvToLngLat(0.56, 0.79), zoom: 9.6, pitch: 52, bearing: 18 },
+  'pole-north': { center: uvToLngLat(0.39, 0.34), zoom: 9.75, pitch: 0, bearing: 0 },
+  'pole-east-northeast': { center: uvToLngLat(0.49, 0.51), zoom: 9.9, pitch: 0, bearing: 0 },
+  'pole-core': { center: uvToLngLat(0.39, 0.58), zoom: 10.15, pitch: 0, bearing: 0 },
+  'pole-west': { center: uvToLngLat(0.26, 0.57), zoom: 9.75, pitch: 0, bearing: 0 },
+  'pole-south': { center: uvToLngLat(0.56, 0.79), zoom: 9.6, pitch: 0, bearing: 0 },
 };
 
 export const CAMERA_KEYFRAMES: CameraKeyframe[] = [
-  // 3D aerial opening overview of all 5 growth poles (matches t = 1.0 for seamless looping)
-  { t: 0.0, center: uvToLngLat(0.48, 0.53), zoom: 8.2, pitch: 38, bearing: -10 },
-  { t: 0.06, center: uvToLngLat(0.48, 0.53), zoom: 8.32, pitch: 42, bearing: -6 },
-  // 1. 3D swoop & zoom onto Cực công nghiệp - logistics phía Bắc
-  { t: 0.15, center: uvToLngLat(0.39, 0.34), zoom: 9.65, pitch: 52, bearing: 10 },
-  { t: 0.24, center: uvToLngLat(0.4, 0.35), zoom: 9.8, pitch: 54, bearing: 18 },
-  // 2. 3D bank & zoom onto Cực đổi mới sáng tạo phía Đông, Đông Bắc
-  { t: 0.33, center: uvToLngLat(0.49, 0.51), zoom: 9.8, pitch: 54, bearing: -12 },
-  { t: 0.41, center: uvToLngLat(0.495, 0.515), zoom: 9.95, pitch: 56, bearing: -19 },
-  // 3. Hero 3D dive & orbit over Cực lõi trung tâm (Sài Gòn - Thủ Thiêm)
-  { t: 0.5, center: uvToLngLat(0.39, 0.58), zoom: 10.05, pitch: 56, bearing: 8 },
-  { t: 0.58, center: uvToLngLat(0.388, 0.578), zoom: 10.22, pitch: 58, bearing: 20 },
-  // 4. 3D sweep & zoom onto Cực đô thị, giáo dục, y tế phía Tây
-  { t: 0.67, center: uvToLngLat(0.26, 0.57), zoom: 9.68, pitch: 50, bearing: -10 },
-  { t: 0.74, center: uvToLngLat(0.255, 0.568), zoom: 9.82, pitch: 52, bearing: -18 },
-  // 5. 3D coastal swoop onto Cực cảng biển - thương mại tự do - năng lượng phía Nam
-  { t: 0.83, center: uvToLngLat(0.56, 0.79), zoom: 9.52, pitch: 52, bearing: 12 },
-  { t: 0.91, center: uvToLngLat(0.57, 0.785), zoom: 9.68, pitch: 54, bearing: 22 },
-  // Smooth aerial climb back to 3D overview
-  { t: 1.0, center: uvToLngLat(0.48, 0.53), zoom: 8.2, pitch: 38, bearing: -10 },
+  // Upright opening overview of all 5 growth poles (matches t = 1.0 for seamless looping)
+  { t: 0.0, center: uvToLngLat(0.48, 0.53), zoom: 8.2, pitch: 0, bearing: 0 },
+  { t: 0.06, center: uvToLngLat(0.48, 0.53), zoom: 8.32, pitch: 0, bearing: 0 },
+  // 1. Zoom onto Cực công nghiệp - logistics phía Bắc
+  { t: 0.15, center: uvToLngLat(0.39, 0.34), zoom: 9.65, pitch: 0, bearing: 0 },
+  { t: 0.24, center: uvToLngLat(0.4, 0.35), zoom: 9.8, pitch: 0, bearing: 0 },
+  // 2. Zoom onto Cực đổi mới sáng tạo phía Đông, Đông Bắc
+  { t: 0.33, center: uvToLngLat(0.49, 0.51), zoom: 9.8, pitch: 0, bearing: 0 },
+  { t: 0.41, center: uvToLngLat(0.495, 0.515), zoom: 9.95, pitch: 0, bearing: 0 },
+  // 3. Zoom over Cực lõi trung tâm (Sài Gòn - Thủ Thiêm)
+  { t: 0.5, center: uvToLngLat(0.39, 0.58), zoom: 10.05, pitch: 0, bearing: 0 },
+  { t: 0.58, center: uvToLngLat(0.388, 0.578), zoom: 10.22, pitch: 0, bearing: 0 },
+  // 4. Zoom onto Cực đô thị, giáo dục, y tế phía Tây
+  { t: 0.67, center: uvToLngLat(0.26, 0.57), zoom: 9.68, pitch: 0, bearing: 0 },
+  { t: 0.74, center: uvToLngLat(0.255, 0.568), zoom: 9.82, pitch: 0, bearing: 0 },
+  // 5. Zoom onto Cực cảng biển - thương mại tự do - năng lượng phía Nam
+  { t: 0.83, center: uvToLngLat(0.56, 0.79), zoom: 9.52, pitch: 0, bearing: 0 },
+  { t: 0.91, center: uvToLngLat(0.57, 0.785), zoom: 9.68, pitch: 0, bearing: 0 },
+  // Smooth climb back to upright overview
+  { t: 1.0, center: uvToLngLat(0.48, 0.53), zoom: 8.2, pitch: 0, bearing: 0 },
 ];
 
 /** Builds concentric 3D extruded cylindrical ring polygons around the 5 growth poles */

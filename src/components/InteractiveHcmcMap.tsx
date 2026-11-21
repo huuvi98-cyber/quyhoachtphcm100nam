@@ -305,6 +305,7 @@ export function InteractiveHcmcMap() {
     });
 
     mapRef.current = map;
+    map.touchZoomRotate.disableRotation();
 
     const releaseAutoCamera = () => {
       if (autoCameraRef.current) {
@@ -455,8 +456,8 @@ export function InteractiveHcmcMap() {
           mapRef.current.jumpTo({
             center: cam.center,
             zoom: cam.zoom,
-            pitch: cam.pitch,
-            bearing: cam.bearing,
+            pitch: 0,
+            bearing: 0,
           });
         }
       }

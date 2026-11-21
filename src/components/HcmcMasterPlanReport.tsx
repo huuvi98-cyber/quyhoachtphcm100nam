@@ -1174,17 +1174,17 @@ export function HcmcMasterPlanReport() {
             {/* 3 Chồng Ảnh Tương Ứng 3 Mốc */}
             {/* Hình 1 (2030): Metro */}
             <div className="roadmap-img absolute inset-0 transition-opacity duration-700 ease-in-out pointer-events-none opacity-100" id="roadmapImg0">
-              <img alt="Hạ tầng giao thông metro hiện đại kết nối đô thị Đông Nam Á" className="w-full h-full object-cover" src="/Metro---ảnh-Hoàng-Triều_1.jpg" />
+              <img alt="Hạ tầng giao thông metro hiện đại kết nối đô thị Đông Nam Á" className="w-full h-full object-cover" src="/report-images/metro-anh-hoang-trieu-1.jpg" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30"></div>
             </div>
             {/* Hình 2 (2045): Skyline Landmark 81 bình minh */}
             <div className="roadmap-img absolute inset-0 transition-opacity duration-700 ease-in-out pointer-events-none opacity-0" id="roadmapImg1">
-              <img alt="Đô thị TPHCM phát triển tầm vóc trung tâm tài chính châu Á" className="w-full h-full object-cover" src="/TP-HCM---ảnh-Hoàng-Triều.jpg" />
+              <img alt="Đô thị TPHCM phát triển tầm vóc trung tâm tài chính châu Á" className="w-full h-full object-cover" src="/report-images/tp-hcm-anh-hoang-trieu.jpg" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30"></div>
             </div>
             {/* Hình 3 (2075+): Thành phố lung linh về đêm */}
             <div className="roadmap-img absolute inset-0 transition-opacity duration-700 ease-in-out pointer-events-none opacity-0" id="roadmapImg2">
-              <img alt="Siêu đô thị TPHCM về đêm rực rỡ bên sông Sài Gòn" className="w-full h-full object-cover" src="/tphcm3.jpg" />
+              <img alt="Siêu đô thị TPHCM về đêm rực rỡ bên sông Sài Gòn" className="w-full h-full object-cover" src="/report-images/tphcm3.jpg" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30"></div>
             </div>
           </div>
@@ -1384,7 +1384,7 @@ export function HcmcMasterPlanReport() {
               <div className="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-md hover:shadow-2xl rounded-3xl">
                 {/* Front Side */}
                 <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
-                  <img alt="Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/tphcm-1.jpg" title="Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm" />
+                  <img alt="Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/report-images/tphcm-1.jpg" title="Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
                     <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực lõi trung tâm: Sài Gòn - Chợ Lớn - Thủ Thiêm</h4>
@@ -1411,7 +1411,7 @@ export function HcmcMasterPlanReport() {
               <div className="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-md hover:shadow-2xl rounded-3xl">
                 {/* Front Side */}
                 <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
-                  <img alt="Sân bay Long Thành và cực đổi mới sáng tạo phía Đông" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/sân bay Long Thành.jpg" />
+                  <img alt="Sân bay Long Thành và cực đổi mới sáng tạo phía Đông" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/report-images/san-bay-long-thanh.jpg" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
                     <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực đổi mới sáng tạo phía Đông, Đông Bắc</h4>
@@ -1438,7 +1438,7 @@ export function HcmcMasterPlanReport() {
               <div className="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-md hover:shadow-2xl rounded-3xl">
                 {/* Front Side */}
                 <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
-                  <img alt="Bàu Bàng - Cực công nghiệp logistics phía Bắc" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/Bàu Bàng.jpg" />
+                  <img alt="Bàu Bàng - Cực công nghiệp logistics phía Bắc" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/report-images/bau-bang.jpg" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
                     <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực công nghiệp - logistics phía Bắc</h4>
@@ -1465,7 +1465,7 @@ export function HcmcMasterPlanReport() {
               <div className="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-md hover:shadow-2xl rounded-3xl">
                 {/* Front Side */}
                 <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
-                  <img alt="Vũng Tàu - Cần Giờ - Cực kinh tế biển phía Nam" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/Vũng Tàu.jpg" />
+                  <img alt="Vũng Tàu - Cần Giờ - Cực kinh tế biển phía Nam" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/report-images/vung-tau.jpg" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
                     <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực cảng biển - thương mại tự do - công nghiệp năng lượng phía Nam</h4>
@@ -1492,7 +1492,7 @@ export function HcmcMasterPlanReport() {
               <div className="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] shadow-md hover:shadow-2xl rounded-3xl">
                 {/* Front Side */}
                 <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-3xl overflow-hidden border border-slate-200 bg-slate-900 flex flex-col justify-end p-6 text-white">
-                  <img alt="Trung tâm y tế chuyên sâu, giáo dục phía Tây" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/y tế.jpg" title="Cực đô thị, giáo dục, y tế phía Tây" />
+                  <img alt="Trung tâm y tế chuyên sâu, giáo dục phía Tây" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/report-images/y-te.jpg" title="Cực đô thị, giáo dục, y tế phía Tây" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-black/30"></div>
                   <div className="relative z-10 space-y-3">
                     <h4 className="text-3xl font-black font-display text-white leading-tight drop-shadow-md">Cực đô thị, giáo dục, y tế phía Tây</h4>
@@ -1527,7 +1527,7 @@ export function HcmcMasterPlanReport() {
           <div className="relative w-full max-w-5xl mx-auto h-[480px] sm:h-[500px] flex items-center justify-center">
             <div className="satellite-card absolute transition-all duration-500 ease-in-out cursor-pointer w-[300px] sm:w-[380px] bg-white rounded-3xl p-5 sm:p-6 border-2 border-mint shadow-2xl z-20 scale-100 opacity-100 -translate-x-0 pointer-events-auto" data-index="0">
               <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden mb-4 shadow-sm">
-                <img alt="Côn Đảo" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src="/Côn Đảo.jpg" />
+                <img alt="Côn Đảo" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src="/report-images/con-dao.jpg" />
               </div>
               <div className="space-y-2">
                 <h4 className="text-2xl font-black font-display text-slate-900">Côn Đảo</h4>
@@ -1536,7 +1536,7 @@ export function HcmcMasterPlanReport() {
             </div>
             <div className="satellite-card absolute transition-all duration-500 ease-in-out cursor-pointer w-[300px] sm:w-[380px] bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-lg z-10 scale-90 opacity-60 translate-x-[70%] sm:translate-x-[65%] pointer-events-auto" data-index="1">
               <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden mb-4 shadow-sm">
-                <img alt="Vũng Tàu - Long Hải - Hồ Tràm" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src="/Long Hải.jpg" />
+                <img alt="Vũng Tàu - Long Hải - Hồ Tràm" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src="/report-images/long-hai.jpg" />
               </div>
               <div className="space-y-2">
                 <h4 className="text-2xl font-black font-display text-slate-900">Vũng Tàu - Long Hải - Hồ Tràm</h4>
@@ -1545,7 +1545,7 @@ export function HcmcMasterPlanReport() {
             </div>
             <div className="satellite-card absolute transition-all duration-500 ease-in-out cursor-pointer w-[300px] sm:w-[380px] bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-md z-0 scale-75 opacity-0 translate-x-[110%] pointer-events-none" data-index="2">
               <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden mb-4 shadow-sm">
-                <img alt="Hóc Môn - Củ Chi" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src="/Hóc Môn.jpg" />
+                <img alt="Hóc Môn - Củ Chi" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src="/report-images/hoc-mon.jpg" />
               </div>
               <div className="space-y-2">
                 <h4 className="text-2xl font-black font-display text-slate-900">Hóc Môn - Củ Chi</h4>
@@ -1554,7 +1554,7 @@ export function HcmcMasterPlanReport() {
             </div>
             <div className="satellite-card absolute transition-all duration-500 ease-in-out cursor-pointer w-[300px] sm:w-[380px] bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-md z-0 scale-75 opacity-0 -translate-x-[110%] pointer-events-none" data-index="3">
               <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden mb-4 shadow-sm">
-                <img alt="Bàu Bàng" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src="/Bàu Bàng 2.jpg" />
+                <img alt="Bàu Bàng" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src="/report-images/bau-bang-2.jpg" />
               </div>
               <div className="space-y-2">
                 <h4 className="text-2xl font-black font-display text-slate-900">Bàu Bàng</h4>
@@ -1563,7 +1563,7 @@ export function HcmcMasterPlanReport() {
             </div>
             <div className="satellite-card absolute transition-all duration-500 ease-in-out cursor-pointer w-[300px] sm:w-[380px] bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-lg z-10 scale-90 opacity-60 -translate-x-[70%] sm:-translate-x-[65%] pointer-events-auto" data-index="4">
               <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden mb-4 shadow-sm">
-                <img alt="Tân Uyên - Bắc Tân Uyên" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src="/Tân Uyên.jpg" />
+                <img alt="Tân Uyên - Bắc Tân Uyên" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" src="/report-images/tan-uyen.jpg" />
               </div>
               <div className="space-y-2">
                 <h4 className="text-2xl font-black font-display text-slate-900">Tân Uyên - Bắc Tân Uyên</h4>
@@ -1955,16 +1955,16 @@ export function HcmcMasterPlanReport() {
       <div className="auto-photo-slideshow relative w-full rounded-3xl overflow-hidden shadow-2xl bg-slate-950 mb-4 group h-[480px] sm:h-[600px] lg:h-[720px] select-none" id="autoPhotoSlideshow">
         <div className="absolute inset-0 w-full h-full">
           <div className="slideshow-slide absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out opacity-100 z-10 pointer-events-auto">
-            <img alt="TPHCM 1" className="w-full h-full object-cover object-center" src="/tphcm-1.jpg" />
+            <img alt="TPHCM 1" className="w-full h-full object-cover object-center" src="/report-images/tphcm-1.jpg" />
           </div>
           <div className="slideshow-slide absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out opacity-0 z-0 pointer-events-none">
-            <img alt="TPHCM 2" className="w-full h-full object-cover object-center" src="/TPHCM-2.jpg" />
+            <img alt="TPHCM 2" className="w-full h-full object-cover object-center" src="/report-images/tphcm-2.jpg" />
           </div>
           <div className="slideshow-slide absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out opacity-0 z-0 pointer-events-none">
-            <img alt="TPHCM 3" className="w-full h-full object-cover object-center" src="/TPHCM-3.jpg" />
+            <img alt="TPHCM 3" className="w-full h-full object-cover object-center" src="/report-images/tphcm-3.jpg" />
           </div>
           <div className="slideshow-slide absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out opacity-0 z-0 pointer-events-none">
-            <img alt="TPHCM 4" className="w-full h-full object-cover object-center" src="/TPHCM-4.jpg" />
+            <img alt="TPHCM 4" className="w-full h-full object-cover object-center" src="/report-images/tphcm-4.jpg" />
           </div>
         </div>
         <button aria-label="Previous image" className="slideshow-prev-btn absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-slate-900/40 hover:bg-slate-900/80 backdrop-blur-md text-white border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg" id="autoSlidePrevBtn" type="button">
@@ -2051,30 +2051,30 @@ export function HcmcMasterPlanReport() {
           <div className="marquee-container space-y-3 overflow-hidden">
             <div className="overflow-hidden w-full relative">
               <div className="marquee-row-1 gap-3" id="metroTrack">
-                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/1-Metro.jpg" /></div>
-                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/2-Metro.jpg" /></div>
-                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/3-Metro.jpg" /></div>
-                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/4-Metro.jpg" /></div>
-                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/5-Metro.jpg" /></div>
-                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/1-Metro.jpg" /></div>
-                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/2-Metro.jpg" /></div>
-                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/3-Metro.jpg" /></div>
-                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/4-Metro.jpg" /></div>
-                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/5-Metro.jpg" /></div>
+                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/1-metro.jpg" /></div>
+                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/2-metro.jpg" /></div>
+                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/3-metro.jpg" /></div>
+                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/4-metro.jpg" /></div>
+                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/5-metro.jpg" /></div>
+                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/1-metro.jpg" /></div>
+                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/2-metro.jpg" /></div>
+                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/3-metro.jpg" /></div>
+                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/4-metro.jpg" /></div>
+                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/5-metro.jpg" /></div>
               </div>
             </div>
             <div className="overflow-hidden w-full relative">
               <div className="marquee-row-2 gap-3" id="portTrack">
-                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/6-can-bien.jpg" /></div>
-                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/7-can-bien.jpg" /></div>
-                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/8-can-bien.jpg" /></div>
-                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/9-can-bien.jpg" /></div>
-                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/10-can-bien.jpg" /></div>
-                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/6-can-bien.jpg" /></div>
-                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/7-can-bien.jpg" /></div>
-                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/8-can-bien.jpg" /></div>
-                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/9-can-bien.jpg" /></div>
-                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/10-can-bien.jpg" /></div>
+                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/6-can-bien.jpg" /></div>
+                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/7-can-bien.jpg" /></div>
+                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/8-can-bien.jpg" /></div>
+                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/9-can-bien.jpg" /></div>
+                <div className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/10-can-bien.jpg" /></div>
+                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/6-can-bien.jpg" /></div>
+                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/7-can-bien.jpg" /></div>
+                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/8-can-bien.jpg" /></div>
+                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/9-can-bien.jpg" /></div>
+                <div aria-hidden="true" className="relative w-[300px] h-[190px] sm:w-[420px] sm:h-[270px] shrink-0 rounded-2xl overflow-hidden shadow-md border border-slate-200 group cursor-pointer"><img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" src="/report-images/10-can-bien.jpg" /></div>
               </div>
             </div>
           </div>
@@ -2182,16 +2182,16 @@ export function HcmcMasterPlanReport() {
       <div className="auto-photo-slideshow relative w-full rounded-3xl overflow-hidden shadow-2xl bg-slate-950 mb-4 group h-[480px] sm:h-[600px] lg:h-[720px] select-none" id="autoPhotoSlideshowPart8">
         <div className="absolute inset-0 w-full h-full">
           <div className="slideshow-slide absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out opacity-100 z-10 pointer-events-auto">
-            <img alt="TPHCM 5" className="w-full h-full object-cover object-center" src="/TPHCM-5.jpg" />
+            <img alt="TPHCM 5" className="w-full h-full object-cover object-center" src="/report-images/tphcm-5.jpg" />
           </div>
           <div className="slideshow-slide absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out opacity-0 z-0 pointer-events-none">
-            <img alt="TPHCM 6" className="w-full h-full object-cover object-center" src="/TPHCM-6.jpg" />
+            <img alt="TPHCM 6" className="w-full h-full object-cover object-center" src="/report-images/tphcm-6.jpg" />
           </div>
           <div className="slideshow-slide absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out opacity-0 z-0 pointer-events-none">
-            <img alt="TPHCM 7" className="w-full h-full object-cover object-center" src="/TPHCM-7.jpg" />
+            <img alt="TPHCM 7" className="w-full h-full object-cover object-center" src="/report-images/tphcm-7.jpg" />
           </div>
           <div className="slideshow-slide absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out opacity-0 z-0 pointer-events-none">
-            <img alt="TPHCM 8" className="w-full h-full object-cover object-center" src="/TPHCM-8.jpg" />
+            <img alt="TPHCM 8" className="w-full h-full object-cover object-center" src="/report-images/tphcm-8.jpg" />
           </div>
         </div>
         <button aria-label="Previous image" className="slideshow-prev-btn absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-slate-900/40 hover:bg-slate-900/80 backdrop-blur-md text-white border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg" id="autoSlidePrevBtnPart8" type="button">

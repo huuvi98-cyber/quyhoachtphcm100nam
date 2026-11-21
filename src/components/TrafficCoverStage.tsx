@@ -9,6 +9,7 @@ import {
 const VIDEO_SRC =
   '/assets/aistudio/Quy_ho_ch_t_ng_th__TPHCM_th_i_k__2025-2050__t_m_nh_n_100_n_m__2__91fa1a70.mp4';
 const SKY_PATCH_SRC = '/assets/sky_clean_dinhhinh.png?v=2';
+const HEADLINE_BAND_CLEAN_SRC = '/assets/headline_band_clean.png';
 
 export interface TrafficCoverStageHandle {
   capturePng: () => void;
@@ -28,21 +29,42 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const skyPatchRef = useRef<HTMLImageElement | null>(null);
+    const headlineBandCleanRef = useRef<HTMLImageElement | null>(null);
     const engineRef = useRef<TrafficEngine | null>(null);
     const configRef = useRef<TrafficConfig>(config);
 
     const [videoReady, setVideoReady] = useState(false);
+    const [assetsReady, setAssetsReady] = useState(false);
     const [videoError, setVideoError] = useState(false);
 
     configRef.current = config;
 
-    // Preload exact clean sky patch for seamless static vector DINH HINH rendering
+    // Preload exact clean sky patch & clean horizontal headline band for static vector DINH HINH & gliding lime bar
     useEffect(() => {
+      let skyLoaded = false;
+      let bandLoaded = false;
+      const checkReady = () => {
+        if (skyLoaded && bandLoaded) {
+          setAssetsReady(true);
+        }
+      };
+
       const skyImg = new Image();
       skyImg.decoding = 'async';
       skyImg.src = SKY_PATCH_SRC;
       skyImg.onload = () => {
         skyPatchRef.current = skyImg;
+        skyLoaded = true;
+        checkReady();
+      };
+
+      const bandImg = new Image();
+      bandImg.decoding = 'async';
+      bandImg.src = HEADLINE_BAND_CLEAN_SRC;
+      bandImg.onload = () => {
+        headlineBandCleanRef.current = bandImg;
+        bandLoaded = true;
+        checkReady();
       };
     }, []);
 
@@ -82,6 +104,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
         engine.update(dt, configRef.current, video ? video.currentTime : undefined);
         engine.render(ctx, null, video, configRef.current, {
           skyPatch: skyPatchRef.current,
+          headlineBandClean: headlineBandCleanRef.current,
         });
 
         rafId = requestAnimationFrame(tick);
@@ -224,7 +247,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
           aria-label="Bìa website Quy hoạch tổng thể TP.HCM giai đoạn 2025-2050 kích thước 1920 nhân 1300 với Landmark 81 và đường sáng mảnh chuyển động qua cầu Sài Gòn"
         />
 
-        {!videoReady && !videoError && (
+        {(!videoReady || !assetsReady) && !videoError && (
           <div className="absolute inset-0 flex items-center justify-center bg-[#0D5CB6]/95 text-sm text-[#EAF4FF]">
             Đang tải khung hình 1920 × 1300…
           </div>

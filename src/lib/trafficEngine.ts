@@ -16,30 +16,40 @@ export interface TrafficConfig {
 
 export interface HeadlineAssets {
   skyPatch: HTMLImageElement | null;
+  headlineBandClean?: HTMLImageElement | null;
   dinhHinhSprite?: HTMLImageElement | null;
 }
 
 export const CANVAS_WIDTH = 1920;
 export const CANVAS_HEIGHT = 1300;
 
-// Wide clean sky patch (covers the entire baked-in red sweep bar x=198..1429, y=166..426 + DINH HINH)
+// Wide clean sky patch (covers the entire baked-in red sweep bar x=198..1429, y=166..426 + DINH HINH + Landmark 81 spire)
 const SKY_PATCH_X = 188;
 const SKY_PATCH_Y = 162;
 const SKY_PATCH_W = 1260;
 const SKY_PATCH_H = 270;
 
-// Right-side overlap strip (y=398..432) where the red sweep bottom briefly meets the lime box (t < 0.54s)
-const RED_STRIP_X = 988;
-const RED_STRIP_Y = 398;
-const RED_STRIP_W = 456;
-const RED_STRIP_H = 34;
-
-// Bright lime-green bar under "LẤY CON NGƯỜI" extended on the right to align flush with "TRUNG TÂM" (x=1547.5)
+// Bright lime-green bar under "LẤY CON NGƯỜI" — glides from "SIÊU ĐÔ THỊ TOÀN CẦU,"
+// behind Landmark 81 and lands flush with "TRUNG TÂM" at x=1008..1547.5
+const BAND_X = 196;
+const BAND_Y = 399;
+const BAND_W = 1356;
+const BAND_H = 88;
+const LIME_BAR_START_LEFT = 198;
+const LIME_BAR_START_RIGHT = 924;
+const LIME_BAR_END_LEFT = 1007.5;
+const LIME_BAR_END_RIGHT = 1547.5;
 const LIME_BAR_EXT_START_X = 1525;
-const LIME_BAR_EXT_END_X = 1547.5;
 const LIME_BAR_Y = 401.5;
 const LIME_BAR_H = 83;
 const LIME_BAR_COLOR = '#B8FE66';
+const LIME_R = 184;
+const LIME_G = 254;
+const LIME_B = 102;
+// Exact dark royal blue RGB of "SIÊU ĐÔ THỊ TOÀN CẦU," and "LẤY CON NGƯỜI"
+const TEXT_R = 1;
+const TEXT_G = 64;
+const TEXT_B = 161;
 
 // Build exact mathematical vector Path2D for "ĐỊNH HÌNH" calibrated pixel-for-pixel to the 1920x1300 master layout.
 // Uses clockwise outer contours + counter-clockwise counter on "Đ" so nonzero fill gives razor-sharp vector edges
@@ -185,15 +195,17 @@ const METRO_BRIDGE_PATH: PathPoint[] = [
 ];
 
 // Exact foreground building occlusion polygons (excluded via evenodd clip so ZERO lines cross buildings):
-// 1. Landmark 81 tower (center — pixel-accurate spire & setback contour)
+// 1. Landmark 81 tower (center — pixel-accurate spire, setbacks & straight x=1007.5 right facade)
 const LANDMARK81_MASK: Array<[number, number]> = [
   [952, 48],
-  [985, 48],
-  [986, 292],
-  [996, 326],
-  [1010, 354],
-  [1014, 430],
-  [1022, 616],
+  [984, 48],
+  [984, 322],
+  [987, 326],
+  [987, 344],
+  [1002, 349],
+  [1007.5, 358],
+  [1007.5, 520],
+  [1018, 616],
   [1036, 650],
   [1036, 1300],
   [856, 1300],
@@ -201,10 +213,12 @@ const LANDMARK81_MASK: Array<[number, number]> = [
   [880, 882],
   [886, 636],
   [906, 558],
-  [914, 312],
-  [922, 312],
-  [922, 294],
-  [952, 294],
+  [915, 510],
+  [915, 316],
+  [923, 314],
+  [923, 294],
+  [944, 290],
+  [952, 284],
 ];
 
 // 2. Lower-left Vinhomes Central Park foreground apartment towers (4 interconnected silhouettes)
@@ -297,6 +311,11 @@ function easeOutSilk(t: number): number {
   return 1 - u * u * u * u * u;
 }
 
+function easeInOutCubic(t: number): number {
+  const u = clamp(t, 0, 1);
+  return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+}
+
 function mulberry32(seed: number): () => number {
   let a = seed;
   return () => {
@@ -378,10 +397,10 @@ export class TrafficEngine {
   private time = 0;
   private headlineElapsed = 0;
   private lastVideoTime = -1;
-  private redStripCanvas: HTMLCanvasElement | null = null;
-  private redStripCtx: CanvasRenderingContext2D | null = null;
-  private cleanSkyStripPixels: Uint8ClampedArray | null = null;
-  private cleanSkyStripSource: HTMLImageElement | null = null;
+  private bandCanvas: HTMLCanvasElement | null = null;
+  private bandCtx: CanvasRenderingContext2D | null = null;
+  private cleanBandPixels: Uint8ClampedArray | null = null;
+  private cleanBandSource: HTMLImageElement | null = null;
   private dinhHinhPath: Path2D | null = null;
 
   constructor() {
@@ -526,8 +545,15 @@ export class TrafficEngine {
       return;
     }
 
+    // 1. Restore clean sky + Landmark 81 upper tower BEFORE building clipping!
+    // Because skyPatch is cropped directly from the clean t=0.0s frame (including Landmark 81's exact spire & setbacks),
+    // drawing it unclipped eliminates 100% of red wipe flashes along every single pixel of the tower edges & DINH HINH.
+    if (config.headlineMode !== 'hidden' && headlineAssets?.skyPatch) {
+      this.drawCleanSkyOverSweepAndHeadline(ctx, videoEl, headlineAssets.skyPatch);
+    }
+
     // Exclude ALL foreground buildings (Landmark 81, Vinhomes left towers, Tan Cang roof, right towers)
-    // via evenodd clipping so BOTH the rising "ĐỊNH HÌNH" headline and light lines stay cleanly behind buildings.
+    // via evenodd clipping so the gliding lime bar, crisp vector "ĐỊNH HÌNH", and light lines stay cleanly behind buildings.
     ctx.save();
     ctx.beginPath();
     ctx.rect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -540,14 +566,8 @@ export class TrafficEngine {
     }
     ctx.clip('evenodd');
 
-    // 1. Restore clean sky first (erases both the baked-in horizontal red wipe bar and compressed video "ĐỊNH HÌNH")
-    // so ascending sky AI filaments glide cleanly behind the crisp static vector headline
-    if (config.headlineMode !== 'hidden' && headlineAssets?.skyPatch) {
-      this.drawCleanSkyOverSweepAndHeadline(ctx, videoEl, headlineAssets.skyPatch);
-    }
-
-    // 2. Extend the bright lime-green background under "LẤY CON NGƯỜI" to align flush with "TRUNG TÂM" (x=1547.5)
-    this.drawExtendedLimeBar(ctx, videoEl);
+    // 2. Glide bright lime-green bar from "SIÊU ĐÔ THỊ TOÀN CẦU," behind Landmark 81, stopping flush under "LẤY CON NGƯỜI"
+    this.drawGlidingLimeBar(ctx, videoEl, headlineAssets?.headlineBandClean ?? null);
 
     if (config.showAiLines) {
       this.drawAscendingAiLines(ctx, config);
@@ -564,43 +584,33 @@ export class TrafficEngine {
     ctx.restore();
   }
 
-  private ensureCleanSkyStripCache(skyPatch: HTMLImageElement): void {
-    if (this.cleanSkyStripSource === skyPatch && this.cleanSkyStripPixels) return;
-    if (typeof document === 'undefined') return;
-
-    if (!this.redStripCanvas) {
-      this.redStripCanvas = document.createElement('canvas');
-      this.redStripCanvas.width = RED_STRIP_W;
-      this.redStripCanvas.height = RED_STRIP_H;
-      this.redStripCtx = this.redStripCanvas.getContext('2d', { willReadFrequently: true });
-    }
-    if (!this.redStripCtx) return;
-
-    this.redStripCtx.clearRect(0, 0, RED_STRIP_W, RED_STRIP_H);
-    this.redStripCtx.drawImage(
-      skyPatch,
-      RED_STRIP_X - SKY_PATCH_X,
-      RED_STRIP_Y - SKY_PATCH_Y,
-      RED_STRIP_W,
-      RED_STRIP_H,
-      0,
-      0,
-      RED_STRIP_W,
-      RED_STRIP_H
-    );
-    this.cleanSkyStripPixels = new Uint8ClampedArray(
-      this.redStripCtx.getImageData(0, 0, RED_STRIP_W, RED_STRIP_H).data
-    );
-    this.cleanSkyStripSource = skyPatch;
-  }
-
   private drawCleanSkyOverSweepAndHeadline(
     ctx: CanvasRenderingContext2D,
     videoEl: HTMLVideoElement | null,
     skyPatch: HTMLImageElement
   ): void {
-    // A. Permanent sky restoration for y=162..398 across the entire sweep width (x=188..1448)
-    // Completely removes the red wipe bar & baked-in "ĐỊNH HÌNH" without touching lower text (y>=400)
+    const vt = videoEl ? videoEl.currentTime : 1;
+
+    // A. During the first 0.55s of the 5s loop (red sweep runs t=0.06..0.44s; "SIÊU ĐÔ THỊ TOÀN CẦU," starts at 0.57s;
+    // "LẤY CON NGƯỜI" starts at 0.67s), paint the ENTIRE clean skyPatch (x=188..1448, y=162..432) including Landmark 81.
+    // This guarantees ZERO red wipe flashes anywhere around Landmark 81 or "ĐỊNH HÌNH".
+    if (vt < 0.55) {
+      ctx.drawImage(
+        skyPatch,
+        0,
+        0,
+        SKY_PATCH_W,
+        SKY_PATCH_H,
+        SKY_PATCH_X,
+        SKY_PATCH_Y,
+        SKY_PATCH_W,
+        SKY_PATCH_H
+      );
+      return;
+    }
+
+    // B. Permanent sky restoration for y=162..398 across the entire sweep width (x=188..1448)
+    // Completely removes the video's compressed "ĐỊNH HÌNH" without touching lower text (y>=400)
     const upperH = 398 - SKY_PATCH_Y;
     ctx.drawImage(
       skyPatch,
@@ -614,7 +624,7 @@ export class TrafficEngine {
       upperH
     );
 
-    // B. Permanent sky restoration strictly for the "dấu nặng" dot under "Ị" (x=622..653, y=377..412)
+    // C. Permanent sky restoration strictly for the "dấu nặng" dot under "Ị" (x=618..658, y=398..415)
     // Kept strictly left of x=658 so the "dấu huyền" on "À" in "TOÀN" (x=666..678, y=406..414) is 100% untouched
     ctx.drawImage(
       skyPatch,
@@ -627,107 +637,249 @@ export class TrafficEngine {
       40,
       17
     );
-
-    // C. During the first 0.49s of the 5s loop (red sweep finishes at 0.44s; "SIÊU ĐÔ THỊ TOÀN CẦU," starts at 0.57s),
-    // erase the 34px bottom edge (y=398..432) of the red sweep bar while keeping "LẤY CON NGƯỜI" untouched
-    const vt = videoEl ? videoEl.currentTime : 1;
-    if (vt < 0.49) {
-      // Left half (x=188..950): "SIÊU ĐÔ THỊ TOÀN CẦU," hasn't appeared yet (starts at 0.57s)
-      const leftW = 950 - SKY_PATCH_X;
-      ctx.drawImage(
-        skyPatch,
-        0,
-        398 - SKY_PATCH_Y,
-        leftW,
-        RED_STRIP_H,
-        SKY_PATCH_X,
-        398,
-        leftW,
-        RED_STRIP_H
-      );
-
-      // Right half (x=988..1444): selectively replace ONLY reddish sweep pixels on a tiny offscreen strip
-      // so the lime-green box stays pixel-exact regardless of video frame timing
-      if (videoEl && videoEl.readyState >= 2) {
-        this.ensureCleanSkyStripCache(skyPatch);
-        const sctx = this.redStripCtx;
-        const skyPx = this.cleanSkyStripPixels;
-        if (sctx && skyPx && this.redStripCanvas) {
-          sctx.drawImage(
-            videoEl,
-            RED_STRIP_X,
-            RED_STRIP_Y,
-            RED_STRIP_W,
-            RED_STRIP_H,
-            0,
-            0,
-            RED_STRIP_W,
-            RED_STRIP_H
-          );
-          const imgData = sctx.getImageData(0, 0, RED_STRIP_W, RED_STRIP_H);
-          const data = imgData.data;
-          let replacedAny = false;
-
-          // Mark red/pinkish sweep pixels (strictly excludes lime green where g > r and blue sky where b > r)
-          const isRed = new Uint8Array(RED_STRIP_W * RED_STRIP_H);
-          for (let p = 0; p < isRed.length; p++) {
-            const idx = p * 4;
-            const r = data[idx];
-            const g = data[idx + 1];
-            const b = data[idx + 2];
-            if (r > 120 && r - g > 26 && r - b > 26) {
-              isRed[p] = 1;
-              replacedAny = true;
-            }
-          }
-
-          if (replacedAny) {
-            // Replace detected red pixels + 1px horizontal fringe (only if non-lime) with clean sky pixels
-            for (let y = 0; y < RED_STRIP_H; y++) {
-              const row = y * RED_STRIP_W;
-              for (let x = 0; x < RED_STRIP_W; x++) {
-                const p = row + x;
-                const hit =
-                  isRed[p] ||
-                  (x > 0 && isRed[p - 1]) ||
-                  (x + 1 < RED_STRIP_W && isRed[p + 1]);
-                if (!hit) continue;
-                const idx = p * 4;
-                // Never overwrite lime-green pixels (g clearly dominates r and b)
-                if (!isRed[p] && data[idx + 1] > 185 && data[idx + 1] > data[idx] + 8) {
-                  continue;
-                }
-                data[idx] = skyPx[idx];
-                data[idx + 1] = skyPx[idx + 1];
-                data[idx + 2] = skyPx[idx + 2];
-                data[idx + 3] = 255;
-              }
-            }
-            sctx.putImageData(imgData, 0, 0);
-            ctx.drawImage(this.redStripCanvas, RED_STRIP_X, RED_STRIP_Y);
-          }
-        }
-      }
-    }
   }
 
-  private drawExtendedLimeBar(
+  private ensureCleanBandCache(bandImg: HTMLImageElement): void {
+    if (this.cleanBandSource === bandImg && this.cleanBandPixels) return;
+    if (typeof document === 'undefined') return;
+
+    if (!this.bandCanvas) {
+      this.bandCanvas = document.createElement('canvas');
+      this.bandCanvas.width = BAND_W;
+      this.bandCanvas.height = BAND_H;
+      this.bandCtx = this.bandCanvas.getContext('2d', { willReadFrequently: true });
+    }
+    if (!this.bandCtx) return;
+
+    this.bandCtx.clearRect(0, 0, BAND_W, BAND_H);
+    this.bandCtx.drawImage(bandImg, 0, 0, BAND_W, BAND_H);
+    this.cleanBandPixels = new Uint8ClampedArray(
+      this.bandCtx.getImageData(0, 0, BAND_W, BAND_H).data
+    );
+    this.cleanBandSource = bandImg;
+  }
+
+  private drawGlidingLimeBar(
     ctx: CanvasRenderingContext2D,
-    videoEl: HTMLVideoElement | null
+    videoEl: HTMLVideoElement | null,
+    headlineBandClean: HTMLImageElement | null
   ): void {
-    // Sync smoothly with the video's left-to-right wipe of the "LẤY CON NGƯỜI" lime bar (reaches x=1527 at t=0.66s)
-    const vt = videoEl ? videoEl.currentTime : 1;
-    if (vt < 0.61) return;
+    const vt = videoEl ? videoEl.currentTime : 3.0;
 
-    const progress = clamp((vt - 0.61) / 0.12, 0, 1);
-    const eased = easeOutSilk(progress);
-    const extWidth = (LIME_BAR_EXT_END_X - LIME_BAR_EXT_START_X) * eased;
-    if (extWidth <= 0.25) return;
+    // Resting phase (t >= 2.02s): lime bar sits parked under "LẤY CON NGƯỜI", flush with "TRUNG TÂM" (x=1547.5).
+    // Fast path: only draw the seamless right-edge extension (zero per-pixel overhead).
+    if (vt >= 2.02) {
+      ctx.save();
+      ctx.fillStyle = LIME_BAR_COLOR;
+      ctx.fillRect(
+        LIME_BAR_EXT_START_X,
+        LIME_BAR_Y,
+        LIME_BAR_END_RIGHT - LIME_BAR_EXT_START_X,
+        LIME_BAR_H
+      );
+      ctx.restore();
+      return;
+    }
 
-    ctx.save();
-    ctx.fillStyle = LIME_BAR_COLOR;
-    ctx.fillRect(LIME_BAR_EXT_START_X, LIME_BAR_Y, extWidth, LIME_BAR_H);
-    ctx.restore();
+    // Before video's built-in lime bar starts (t < 0.21s), nothing to erase or draw yet
+    if (vt < 0.21) return;
+
+    if (!videoEl || videoEl.readyState < 2 || !headlineBandClean) return;
+    this.ensureCleanBandCache(headlineBandClean);
+    const bctx = this.bandCtx;
+    const cleanPx = this.cleanBandPixels;
+    if (!bctx || !cleanPx || !this.bandCanvas) return;
+
+    // Choreograph the lime-green bar journey:
+    //  - 0.21s..0.56s: erase video's premature right-side lime bar while waiting for "SIÊU ĐÔ THỊ TOÀN CẦU,"
+    //  - 0.56s..0.94s: expand smoothly underneath "SIÊU ĐÔ THỊ TOÀN CẦU," (x = 198 -> 924)
+    //  - 0.94s..2.02s: glide smoothly across behind Landmark 81 and brake into "LẤY CON NGƯỜI" (1008 .. 1547.5)
+    let barLeft = -1;
+    let barRight = -1;
+    if (vt >= 0.56 && vt < 0.94) {
+      const p = easeOutSilk((vt - 0.56) / 0.38);
+      barLeft = LIME_BAR_START_LEFT;
+      barRight = lerp(LIME_BAR_START_LEFT, LIME_BAR_START_RIGHT, p);
+    } else if (vt >= 0.94) {
+      const u = clamp((vt - 0.94) / 1.08, 0, 1);
+      const uR = easeInOutCubic(clamp(u * 1.12, 0, 1));
+      const uL = easeInOutCubic(clamp((u - 0.06) / 0.94, 0, 1));
+      barLeft = lerp(LIME_BAR_START_LEFT, LIME_BAR_END_LEFT, uL);
+      barRight = lerp(LIME_BAR_START_RIGHT, LIME_BAR_END_RIGHT, uR);
+    }
+
+    bctx.drawImage(videoEl, BAND_X, BAND_Y, BAND_W, BAND_H, 0, 0, BAND_W, BAND_H);
+    const imgData = bctx.getImageData(0, 0, BAND_W, BAND_H);
+    const data = imgData.data;
+
+    // Local X ranges inside BAND_X=196..1552:
+    //  - Left headline region: xGlobal = 198..926  -> lx = 2..730
+    //  - Right headline region: xGlobal = 1006..1549 -> lx = 810..1353
+    // Local Y range for the lime bar (yGlobal = 401.5..484.5 -> ly = 2.5..85.5, safe above TRUNG TÂM at y=488):
+    const lyStart = 1; // yGlobal = 400
+    const lyEnd = 86;  // yGlobal = 485
+
+    const lrMinusTr = LIME_R - TEXT_R;
+    const lgMinusTg = LIME_G - TEXT_G;
+    const rightDenom = lrMinusTr * lrMinusTr + lgMinusTg * lgMinusTg;
+
+    for (let ly = lyStart; ly <= lyEnd; ly++) {
+      const yGlobal = BAND_Y + ly;
+      // Smooth 1px vertical anti-aliased edge matching y = 401.5 .. 484.5
+      let vCov = 0;
+      if (yGlobal >= 402 && yGlobal <= 483) vCov = 1;
+      else if (yGlobal === 401 || yGlobal === 484) vCov = 0.5;
+
+      const rowOff = ly * BAND_W;
+
+      // 1. Left side ("SIÊU ĐÔ THỊ TOÀN CẦU,"): composite gliding lime bar BEHIND dark-blue text
+      if (vCov > 0 && barRight > BAND_X && barLeft < 928) {
+        const lxFrom = Math.max(0, Math.floor(barLeft) - BAND_X);
+        const lxTo = Math.min(732, Math.ceil(barRight) - BAND_X);
+        for (let lx = lxFrom; lx <= lxTo; lx++) {
+          const xGlobal = BAND_X + lx;
+          const hCov = clamp(Math.min(xGlobal + 1 - barLeft, barRight - xGlobal), 0, 1);
+          const cov = hCov * vCov;
+          if (cov <= 0.005) continue;
+
+          const idx = (rowOff + lx) * 4;
+          const r = data[idx];
+          const g = data[idx + 1];
+          const b = data[idx + 2];
+          const sr = cleanPx[idx];
+          const sg = cleanPx[idx + 1];
+          const sb = cleanPx[idx + 2];
+
+          // Extract anti-aliased dark-blue text alpha against clean sky background
+          let textAlpha = 0;
+          if (r < sr - 6 && g < sg - 6) {
+            const dr = sr - TEXT_R;
+            const dg = sg - TEXT_G;
+            const db = sb - TEXT_B;
+            const denom = dr * dr + dg * dg + db * db;
+            if (denom > 400) {
+              const rawA = ((sr - r) * dr + (sg - g) * dg + (sb - b) * db) / denom;
+              if (rawA > 0.05) {
+                textAlpha = clamp((rawA - 0.05) / 0.95, 0, 1);
+              }
+            }
+          }
+
+          // Background transitions smoothly from sky -> lime bar according to sub-pixel edge coverage
+          const bgR = sr + (LIME_R - sr) * cov;
+          const bgG = sg + (LIME_G - sg) * cov;
+          const bgB = sb + (LIME_B - sb) * cov;
+
+          // Keep dark-blue text razor-sharp and anti-aliased on top of the gliding lime bar
+          data[idx] = Math.round(bgR + (TEXT_R - bgR) * textAlpha);
+          data[idx + 1] = Math.round(bgG + (TEXT_G - bgG) * textAlpha);
+          data[idx + 2] = Math.round(bgB + (TEXT_B - bgB) * textAlpha);
+          data[idx + 3] = 255;
+        }
+      }
+
+      // 2. Right side ("LẤY CON NGƯỜI"):
+      //    - Un-matte video's premature lime bar back to clean sky wherever our gliding bar hasn't arrived yet
+      //    - Keep "LẤY CON NGƯỜI" dark-blue letters 100% crisp on top
+      //    - Draw the extended lime bar cleanly out to x = 1547.5 as barRight reaches it
+      const rFrom = 810; // xGlobal = 1006
+      const rTo = 1353;  // xGlobal = 1549
+      for (let lx = rFrom; lx <= rTo; lx++) {
+        const xGlobal = BAND_X + lx;
+        const hCov =
+          barRight > barLeft
+            ? clamp(Math.min(xGlobal + 1 - barLeft, barRight - xGlobal), 0, 1)
+            : 0;
+        const cov = hCov * vCov;
+
+        const idx = (rowOff + lx) * 4;
+        const sr = cleanPx[idx];
+        const sg = cleanPx[idx + 1];
+        const sb = cleanPx[idx + 2];
+
+        // Right extension strip (x = 1527..1548): no text here, pure clean sky -> lime bar
+        if (xGlobal >= 1527) {
+          if (cov > 0.005) {
+            data[idx] = Math.round(sr + (LIME_R - sr) * cov);
+            data[idx + 1] = Math.round(sg + (LIME_G - sg) * cov);
+            data[idx + 2] = Math.round(sb + (LIME_B - sb) * cov);
+            data[idx + 3] = 255;
+          }
+          continue;
+        }
+
+        // Inside video's built-in lime bar area (x = 1006..1526):
+        // If our gliding bar fully covers this pixel (and vt >= 0.72 so video's bar is already full here), keep crisp video as-is
+        if (cov >= 0.995 && vt >= 0.72) {
+          continue;
+        }
+
+        const r = data[idx];
+        const g = data[idx + 1];
+        const b = data[idx + 2];
+
+        // If pixel already matches clean sky closely (no text and no lime bar yet), leave or blend directly with lime
+        const skyDiff = Math.abs(r - sr) + Math.abs(g - sg) + Math.abs(b - sb);
+        if (skyDiff < 32) {
+          if (cov > 0.005) {
+            data[idx] = Math.round(sr + (LIME_R - sr) * cov);
+            data[idx + 1] = Math.round(sg + (LIME_G - sg) * cov);
+            data[idx + 2] = Math.round(sb + (LIME_B - sb) * cov);
+            data[idx + 3] = 255;
+          }
+          continue;
+        }
+
+        // Un-matte dark-blue "LẤY CON NGƯỜI" text from the video's lime bar using (R, G) channels
+        let textAlpha = 0;
+        if (vt >= 0.65 && r < LIME_R - 10 && g < LIME_G - 10 && b > 95) {
+          const rawA = ((LIME_R - r) * lrMinusTr + (LIME_G - g) * lgMinusTg) / rightDenom;
+          if (rawA > 0.07) {
+            textAlpha = clamp((rawA - 0.07) / 0.93, 0, 1);
+          }
+        }
+
+        const bgR = sr + (LIME_R - sr) * cov;
+        const bgG = sg + (LIME_G - sg) * cov;
+        const bgB = sb + (LIME_B - sb) * cov;
+
+        data[idx] = Math.round(bgR + (TEXT_R - bgR) * textAlpha);
+        data[idx + 1] = Math.round(bgG + (TEXT_G - bgG) * textAlpha);
+        data[idx + 2] = Math.round(bgB + (TEXT_B - bgB) * textAlpha);
+        data[idx + 3] = 255;
+      }
+    }
+
+    bctx.putImageData(imgData, 0, 0);
+    const sliceH = lyEnd - lyStart + 1;
+
+    // Blit left slice ("SIÊU ĐÔ THỊ TOÀN CẦU,") only while the gliding lime bar is active on the left (vt >= 0.56, after red sweep ended)
+    if (vt >= 0.56 && barLeft < 928) {
+      ctx.drawImage(
+        this.bandCanvas,
+        0,
+        lyStart,
+        732,
+        sliceH,
+        BAND_X,
+        BAND_Y + lyStart,
+        732,
+        sliceH
+      );
+    }
+
+    // Blit right slice ("LẤY CON NGƯỜI" + flush extension to x=1547.5) cleanly above TRUNG TÂM (y=400..485)
+    ctx.drawImage(
+      this.bandCanvas,
+      810,
+      lyStart,
+      544,
+      sliceH,
+      BAND_X + 810,
+      BAND_Y + lyStart,
+      544,
+      sliceH
+    );
   }
 
   private drawCrispDinhHinh(

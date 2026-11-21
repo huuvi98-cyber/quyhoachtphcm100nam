@@ -1,20 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as maplibregl from 'maplibre-gl';
-import { Minus, Pause, Play, Plus, RotateCcw } from 'lucide-react';
 import {
   GROWTH_POLES,
   HCMC_BOUNDARY_GEOJSON,
   MAP_IMAGE_COORDINATES,
   MAP_MAX_BOUNDS,
   OFFICIAL_MAP_IMAGE_URL,
-  OVERVIEW_3D_CAMERA,
-  POLE_CAMERA_TARGETS,
   TIMELINE_DURATION_SEC,
   buildAnimatedBoundaryTraceGeoJSON,
   buildAnimatedRoutesGeoJSON,
   buildMovingPulsesGeoJSON,
   buildPinkBorderCometGeoJSON,
-  buildPole3DRingsGeoJSON,
   interpolateCamera,
   type GrowthPole,
 } from '../data/hcmcMapData';
@@ -22,12 +18,6 @@ import {
 function createOfficialMapStyle(): maplibregl.StyleSpecification {
   return {
     version: 8,
-    light: {
-      anchor: 'viewport',
-      color: '#FFFFFF',
-      intensity: 0.42,
-      position: [1.35, 210, 38],
-    },
     sources: {
       'official-hcmc-map': {
         type: 'image',
@@ -70,7 +60,6 @@ export function InteractiveHcmcMap() {
   const pulseClockRef = useRef(0);
   const isPlayingRef = useRef(false);
   const autoCameraRef = useRef(true);
-  const cameraBridgeUntilRef = useRef(0);
 
   // UI state
   const [hoveredPole, setHoveredPole] = useState<{
@@ -79,91 +68,6 @@ export function InteractiveHcmcMap() {
     y: number;
   } | null>(null);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
-  const [isAutoFlying, setIsAutoFlying] = useState(true);
-  const [is3DMode, setIs3DMode] = useState(true);
-
-  const handleToggleAutoFly = useCallback(() => {
-    const map = mapRef.current;
-    if (autoCameraRef.current) {
-      autoCameraRef.current = false;
-      setIsAutoFlying(false);
-      map?.stop();
-      return;
-    }
-
-    autoCameraRef.current = true;
-    isPlayingRef.current = true;
-    setIsAutoFlying(true);
-    setIs3DMode(true);
-    if (map && mapLoadedRef.current) {
-      const target = interpolateCamera(progressRef.current);
-      cameraBridgeUntilRef.current = performance.now() + 820;
-      map.easeTo({
-        center: target.center,
-        zoom: target.zoom,
-        pitch: target.pitch,
-        bearing: target.bearing,
-        duration: 800,
-        essential: true,
-      });
-    }
-  }, []);
-
-  const handleToggle3D = useCallback(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    autoCameraRef.current = false;
-    setIsAutoFlying(false);
-    const next3D = !is3DMode;
-    setIs3DMode(next3D);
-    map.easeTo({
-      pitch: next3D ? 50 : 0,
-      bearing: next3D ? -10 : 0,
-      duration: 750,
-      essential: true,
-    });
-  }, [is3DMode]);
-
-  const handleZoomIn = useCallback(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    autoCameraRef.current = false;
-    setIsAutoFlying(false);
-    map.zoomIn({ duration: 360 });
-  }, []);
-
-  const handleZoomOut = useCallback(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    autoCameraRef.current = false;
-    setIsAutoFlying(false);
-    map.zoomOut({ duration: 360 });
-  }, []);
-
-  const handleResetOverview = useCallback(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    activePoleRef.current = null;
-    setHoveredPole(null);
-    poleMarkersRef.current.forEach((item) => {
-      item.el.dataset.active = 'false';
-    });
-    progressRef.current = 0;
-    autoCameraRef.current = true;
-    isPlayingRef.current = true;
-    setIsAutoFlying(true);
-    setIs3DMode(true);
-    cameraBridgeUntilRef.current = performance.now() + 980;
-    map.flyTo({
-      center: OVERVIEW_3D_CAMERA.center,
-      zoom: OVERVIEW_3D_CAMERA.zoom,
-      pitch: OVERVIEW_3D_CAMERA.pitch,
-      bearing: OVERVIEW_3D_CAMERA.bearing,
-      duration: 950,
-      curve: 1.3,
-      essential: true,
-    });
-  }, []);
 
   // Attach all GeoJSON sources and WebGL layers onto the MapLibre instance
   const attachGeoJsonLayers = useCallback((map: maplibregl.Map) => {
@@ -345,29 +249,6 @@ export function InteractiveHcmcMap() {
         },
       });
     }
-
-    // 4. 3D extruded architectural rings rising concentrically around the 5 growth poles
-    if (!map.getSource('pole-3d-rings')) {
-      map.addSource('pole-3d-rings', {
-        type: 'geojson',
-        data: buildPole3DRingsGeoJSON(),
-      });
-    }
-
-    if (!map.getLayer('pole-3d-rings-extrusion')) {
-      map.addLayer({
-        id: 'pole-3d-rings-extrusion',
-        type: 'fill-extrusion',
-        source: 'pole-3d-rings',
-        paint: {
-          'fill-extrusion-color': ['get', 'color'],
-          'fill-extrusion-height': ['get', 'height'],
-          'fill-extrusion-base': 0,
-          'fill-extrusion-opacity': 0.56,
-          'fill-extrusion-vertical-gradient': true,
-        },
-      });
-    }
   }, []);
 
   // Push live frame data from requestAnimationFrame into MapLibre sources & markers
@@ -400,7 +281,7 @@ export function InteractiveHcmcMap() {
     }
   }, []);
 
-  // Initialize MapLibre GL JS once with 3D perspective camera & flying zoom tour
+  // Initialize MapLibre GL JS once with the official 5-pole TP.HCM map (locked straight upright)
   useEffect(() => {
     const container = mapContainerRef.current;
     if (!container) return;
@@ -411,15 +292,15 @@ export function InteractiveHcmcMap() {
       style: createOfficialMapStyle(),
       center: initialCam.center,
       zoom: initialCam.zoom,
-      pitch: initialCam.pitch,
-      bearing: initialCam.bearing,
+      pitch: 0,
+      bearing: 0,
       maxBounds: MAP_MAX_BOUNDS,
-      maxPitch: 64,
-      dragRotate: true,
-      pitchWithRotate: true,
-      touchPitch: true,
+      maxPitch: 0,
+      dragRotate: false,
+      pitchWithRotate: false,
+      touchPitch: false,
       minZoom: 6.8,
-      maxZoom: 12.2,
+      maxZoom: 11.4,
       attributionControl: false,
     });
 
@@ -428,16 +309,10 @@ export function InteractiveHcmcMap() {
     const releaseAutoCamera = () => {
       if (autoCameraRef.current) {
         autoCameraRef.current = false;
-        setIsAutoFlying(false);
       }
     };
     map.on('dragstart', releaseAutoCamera);
     map.on('wheel', releaseAutoCamera);
-    map.on('rotatestart', releaseAutoCamera);
-    map.on('pitchstart', releaseAutoCamera);
-    map.on('pitchend', () => {
-      setIs3DMode(map.getPitch() > 8);
-    });
 
     // Build 5 interactive location-pin hotspots aligned over the 5 circular pole icons
     const createdPoles = new Map<
@@ -496,21 +371,6 @@ export function InteractiveHcmcMap() {
           });
           activePoleRef.current = pole;
           btn.dataset.active = 'true';
-          autoCameraRef.current = false;
-          setIsAutoFlying(false);
-          setIs3DMode(true);
-          const target = POLE_CAMERA_TARGETS[pole.id];
-          if (target) {
-            map.flyTo({
-              center: target.center,
-              zoom: target.zoom,
-              pitch: target.pitch,
-              bearing: target.bearing,
-              duration: 1350,
-              curve: 1.35,
-              essential: true,
-            });
-          }
           updateHoveredPosition(pole);
         }
       });
@@ -555,22 +415,15 @@ export function InteractiveHcmcMap() {
     };
   }, [attachGeoJsonLayers, syncMapVisuals]);
 
-  // Auto-start the 3D fly-in animation once the user scrolls to the interactive map section
+  // Auto-start the fly-in animation once the user scrolls to the interactive map section
   useEffect(() => {
     const el = sectionRef.current;
     if (!el || hasAutoStarted) return;
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
           setHasAutoStarted(true);
           isPlayingRef.current = true;
-          if (prefersReducedMotion) {
-            autoCameraRef.current = false;
-            setIsAutoFlying(false);
-          }
           observer.disconnect();
         }
       },
@@ -580,7 +433,7 @@ export function InteractiveHcmcMap() {
     return () => observer.disconnect();
   }, [hasAutoStarted]);
 
-  // Main 60fps requestAnimationFrame loop driving continuous 3D 5-pole fly-through & animations
+  // Main 60fps requestAnimationFrame loop driving continuous 5-pole auto-zoom tour & animations
   useEffect(() => {
     let rafId = 0;
     let lastTs = performance.now();
@@ -591,18 +444,13 @@ export function InteractiveHcmcMap() {
 
       pulseClockRef.current += dt;
 
-      // Pause auto-camera gently while the user hovers a growth pole
+      // Pause auto-camera gently while the user hovers a growth pole so the tooltip stays rock-steady
       if (isPlayingRef.current && !activePoleRef.current) {
+        const nextP = (progressRef.current + dt / TIMELINE_DURATION_SEC) % 1;
+        progressRef.current = nextP;
         visualsProgressRef.current = Math.min(1, visualsProgressRef.current + dt / 18);
 
-        if (
-          autoCameraRef.current &&
-          now >= cameraBridgeUntilRef.current &&
-          mapRef.current &&
-          mapLoadedRef.current
-        ) {
-          const nextP = (progressRef.current + dt / TIMELINE_DURATION_SEC) % 1;
-          progressRef.current = nextP;
+        if (autoCameraRef.current && mapRef.current && mapLoadedRef.current) {
           const cam = interpolateCamera(nextP);
           mapRef.current.jumpTo({
             center: cam.center,
@@ -625,73 +473,15 @@ export function InteractiveHcmcMap() {
     <section
       ref={sectionRef}
       aria-label="Bản đồ động Quy hoạch tổng thể TP.HCM 2025-2050"
-      className="w-full mt-10 md:mt-14 lg:mt-16"
+      className="w-[92%] sm:w-[88%] lg:w-[82%] max-w-[1460px] mx-auto mt-10 md:mt-14 lg:mt-16"
     >
-      {/* Main Interactive Map Stage (full-bleed viewport width) */}
-      <figure className="m-0 w-full">
+      {/* Main Interactive Map Stage (transparent, no outer white box background) */}
+      <figure className="m-0">
         <div className="relative w-full overflow-hidden">
           <div
             ref={mapContainerRef}
-            className="relative w-full h-[540px] sm:h-[640px] lg:h-[760px] xl:h-[820px] map-theme-official"
+            className="relative w-full h-[520px] sm:h-[600px] lg:h-[680px] map-theme-official"
           />
-
-          {/* Compact 3D Camera Fly & Zoom Control Bar (Bottom-Left) */}
-          <div
-            aria-label="Điều khiển camera 3D và thu phóng bản đồ"
-            className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 lg:bottom-6 lg:left-6 z-20 inline-flex items-center gap-1 rounded-xl bg-[#083D88]/92 backdrop-blur-md border border-[#FED84D]/75 p-1 shadow-[0_12px_28px_rgba(4,28,72,0.45)]"
-          >
-            <button
-              type="button"
-              onClick={handleToggleAutoFly}
-              aria-label={isAutoFlying ? 'Tạm dừng camera bay 3D' : 'Tiếp tục camera bay 3D'}
-              className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-white/12 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
-            >
-              {isAutoFlying ? (
-                <Pause className="w-3.5 h-3.5 text-[#FED84D]" aria-hidden="true" />
-              ) : (
-                <Play className="w-3.5 h-3.5 text-[#FED84D]" aria-hidden="true" />
-              )}
-              <span>{isAutoFlying ? 'Dừng bay' : 'Bay 3D'}</span>
-            </button>
-            <span aria-hidden="true" className="h-4 w-px bg-white/20" />
-            <button
-              type="button"
-              onClick={handleToggle3D}
-              aria-label={is3DMode ? 'Chuyển góc nhìn phẳng 2D' : 'Chuyển góc nhìn nghiêng 3D'}
-              className={`rounded-lg px-2 py-1.5 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D] ${
-                is3DMode
-                  ? 'bg-[#FED84D] text-[#052354]'
-                  : 'text-white hover:bg-white/12'
-              }`}
-            >
-              {is3DMode ? '3D' : '2D'}
-            </button>
-            <span aria-hidden="true" className="h-4 w-px bg-white/20" />
-            <button
-              type="button"
-              onClick={handleZoomIn}
-              aria-label="Phóng to bản đồ"
-              className="flex items-center justify-center w-7 h-7 rounded-lg text-white hover:bg-white/12 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
-            >
-              <Plus className="w-3.5 h-3.5" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              onClick={handleZoomOut}
-              aria-label="Thu nhỏ bản đồ"
-              className="flex items-center justify-center w-7 h-7 rounded-lg text-white hover:bg-white/12 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
-            >
-              <Minus className="w-3.5 h-3.5" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              onClick={handleResetOverview}
-              aria-label="Về toàn cảnh 3D và bay lại"
-              className="flex items-center justify-center w-7 h-7 rounded-lg text-white hover:bg-white/12 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED84D]"
-            >
-              <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
-            </button>
-          </div>
 
           {/* Hover Tooltip Card for the 5 Growth Pole Location Pin Icons */}
           {hoveredPole && (() => {

@@ -1,4 +1,5 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { resolveAssetUrl } from '../lib/embeddedAssets';
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
@@ -39,6 +40,8 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
 
     configRef.current = config;
 
+    const resolvedVideoSrc = useMemo(() => resolveAssetUrl(VIDEO_SRC), []);
+
     // Preload exact clean sky patch & clean horizontal headline band for static vector DINH HINH & gliding lime bar
     useEffect(() => {
       let skyLoaded = false;
@@ -51,7 +54,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
 
       const skyImg = new Image();
       skyImg.decoding = 'async';
-      skyImg.src = SKY_PATCH_SRC;
+      skyImg.src = resolveAssetUrl(SKY_PATCH_SRC);
       skyImg.onload = () => {
         skyPatchRef.current = skyImg;
         skyLoaded = true;
@@ -60,7 +63,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
 
       const bandImg = new Image();
       bandImg.decoding = 'async';
-      bandImg.src = HEADLINE_BAND_CLEAN_SRC;
+      bandImg.src = resolveAssetUrl(HEADLINE_BAND_CLEAN_SRC);
       bandImg.onload = () => {
         headlineBandCleanRef.current = bandImg;
         bandLoaded = true;
@@ -222,7 +225,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
         {/* Native 1920x1300 video source composited cleanly onto canvas */}
         <video
           ref={videoRef}
-          src={VIDEO_SRC}
+          src={resolvedVideoSrc}
           autoPlay
           loop
           muted

@@ -2,8 +2,17 @@
 @import "maplibre-gl/dist/maplibre-gl.css";
 
 @theme {
-  --font-sans: "Be Vietnam Pro", system-ui, -apple-system, sans-serif;
+  --font-sans: "Be Vietnam Pro", "Inter", system-ui, -apple-system, sans-serif;
+  --font-editorial: "Be Vietnam Pro", "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Be Vietnam Pro", "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --color-cobalt: #0057FF;
+  --color-energy: #FF4D1C;
+  --color-mint: #00C896;
+  --color-ice: #00A8E8;
+  --color-sun: #FFB800;
+  --color-carbon: #0B132B;
+  --color-icegray: #F2F6FA;
 }
 
 @layer base {
@@ -349,11 +358,228 @@
   max-width: 225px;
 }
 
+/* ========================================================================== */
+/* Scoped styles for appended HCMC Master Plan editorial report (100% match)  */
+/* Matches standalone html { font-size: 18px } without affecting cover/map    */
+/* ========================================================================== */
+.editorial-report-scope {
+  font-family: var(--font-editorial);
+  color-scheme: light;
+  --spacing: 4.5px;
+  --text-xs: 13.5px;
+  --text-xs--line-height: 18px;
+  --text-sm: 15.75px;
+  --text-sm--line-height: 22.5px;
+  --text-base: 18px;
+  --text-base--line-height: 27px;
+  --text-lg: 20.25px;
+  --text-lg--line-height: 31.5px;
+  --text-xl: 22.5px;
+  --text-xl--line-height: 31.5px;
+  --text-2xl: 27px;
+  --text-2xl--line-height: 36px;
+  --text-3xl: 33.75px;
+  --text-3xl--line-height: 40.5px;
+  --text-4xl: 40.5px;
+  --text-4xl--line-height: 45px;
+  --text-5xl: 54px;
+  --text-5xl--line-height: 1;
+  --container-4xl: 1008px;
+  --container-5xl: 1152px;
+  --container-7xl: 1440px;
+  --radius-lg: 9px;
+  --radius-xl: 13.5px;
+  --radius-2xl: 18px;
+  --radius-3xl: 27px;
+}
+
+@keyframes marqueeSlide {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+.editorial-report-scope .marquee-track {
+  display: inline-flex;
+  width: max-content;
+  animation: marqueeSlide var(--marquee-duration, 25s) linear infinite;
+}
+.editorial-report-scope .marquee-track.is-paused {
+  animation-play-state: paused !important;
+}
+
+@keyframes marqueeRow1 {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes marqueeRow2 {
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+.editorial-report-scope .marquee-row-1 {
+  display: flex;
+  width: max-content;
+  animation: marqueeRow1 55s linear infinite;
+  will-change: transform;
+}
+.editorial-report-scope .marquee-row-2 {
+  display: flex;
+  width: max-content;
+  animation: marqueeRow2 55s linear infinite;
+  will-change: transform;
+}
+.editorial-report-scope .marquee-container:hover .marquee-row-1,
+.editorial-report-scope .marquee-container:hover .marquee-row-2 {
+  animation-play-state: paused;
+}
+
+.editorial-report-scope .bg-dot-grid {
+  background-image: radial-gradient(#CBD5E1 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+.editorial-report-scope .bg-dot-grid-dark {
+  background-image: radial-gradient(rgba(0, 87, 255, 0.25) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+}
+
+.editorial-report-scope .huge-num {
+  font-variant-numeric: tabular-nums;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.editorial-report-scope .scroll-step-card {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.4;
+  transform: translateY(6px) scale(0.98);
+}
+.editorial-report-scope .scroll-step-card.active-step {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  border-color: #0057FF !important;
+  box-shadow: 0 16px 36px -12px rgba(0, 87, 255, 0.18);
+}
+
+.editorial-report-scope .roadmap-step {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.42;
+  transform: translateY(12px) scale(0.98);
+}
+.editorial-report-scope .roadmap-step.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  box-shadow: 0 20px 40px -15px rgba(0, 87, 255, 0.15);
+}
+
+.editorial-report-scope .glow-cobalt {
+  filter: drop-shadow(0 0 16px rgba(0, 87, 255, 0.45));
+}
+.editorial-report-scope .glow-energy {
+  filter: drop-shadow(0 0 16px rgba(255, 77, 28, 0.45));
+}
+
+.editorial-report-scope .flip-card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+/* Part 3 Photo Background with Bottom Fade */
+#sec-part3 {
+  position: relative;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+#sec-part3::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('/tphcmnen%204.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.85) 45%, rgba(0, 0, 0, 0.25) 80%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.85) 45%, rgba(0, 0, 0, 0.25) 80%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+#sec-part3::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.58) 0%,
+    rgba(255, 255, 255, 0.28) 28%,
+    rgba(255, 255, 255, 0.65) 70%,
+    #ffffff 96%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes elemFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes elemOrbit {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes elemPulseRing {
+  0% { transform: scale(0.88); opacity: 0.75; }
+  70% { transform: scale(1.28); opacity: 0; }
+  100% { transform: scale(1.28); opacity: 0; }
+}
+@keyframes elemWave {
+  0%, 100% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+}
+@keyframes elemTrain {
+  0%, 100% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+}
+@keyframes elemBarBounce {
+  0%, 100% { transform: scaleY(0.45); }
+  50% { transform: scaleY(1); }
+}
+@keyframes dividerShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.editorial-report-scope .anim-float { animation: elemFloat 3s ease-in-out infinite; will-change: transform; }
+.editorial-report-scope .anim-orbit { animation: elemOrbit 12s linear infinite; transform-origin: center; transform-box: fill-box; will-change: transform; }
+.editorial-report-scope .anim-pulse-ring { animation: elemPulseRing 2.4s cubic-bezier(0.2, 0.7, 0.4, 1) infinite; transform-origin: center; transform-box: fill-box; will-change: transform, opacity; }
+.editorial-report-scope .anim-wave { animation: elemWave 2.8s ease-in-out infinite; transform-box: fill-box; will-change: transform; }
+.editorial-report-scope .anim-train { animation: elemTrain 2.4s ease-in-out infinite; transform-box: fill-box; will-change: transform; }
+.editorial-report-scope .anim-bar { animation: elemBarBounce 1.8s ease-in-out infinite; transform-origin: bottom; transform-box: fill-box; will-change: transform; }
+.editorial-report-scope .anim-divider {
+  background-size: 200% 100%;
+  animation: dividerShimmer 3.5s linear infinite;
+}
+@keyframes zoneCardInRight {
+  0% { opacity: 0; transform: translateX(18px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes zoneCardInLeft {
+  0% { opacity: 0; transform: translateX(-18px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+.editorial-report-scope .zone-enter-right { animation: zoneCardInRight 0.28s ease-out; }
+.editorial-report-scope .zone-enter-left { animation: zoneCardInLeft 0.28s ease-out; }
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
   .map-hub-marker .hub-ping {
     animation: none;
+  }
+  .editorial-report-scope .anim-float,
+  .editorial-report-scope .anim-orbit,
+  .editorial-report-scope .anim-pulse-ring,
+  .editorial-report-scope .anim-wave,
+  .editorial-report-scope .anim-train,
+  .editorial-report-scope .anim-bar,
+  .editorial-report-scope .anim-divider,
+  .editorial-report-scope .zone-enter-right,
+  .editorial-report-scope .zone-enter-left {
+    animation: none !important;
   }
 }

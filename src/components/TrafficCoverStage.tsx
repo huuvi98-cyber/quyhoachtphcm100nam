@@ -8,8 +8,8 @@ import {
   TrafficEngine,
 } from '../lib/trafficEngine';
 
-const VIDEO_SRC =
-  '/assets/aistudio/Quy_ho_ch_t_ng_th__TPHCM_th_i_k__2025-2050__t_m_nh_n_100_n_m__3__29f4ee55.mp4';
+const VIDEO_SRC = '/assets/cover_hcmc_2025.mp4';
+const COVER3_POSTER_SRC = '/assets/cover3_poster.jpg';
 const SKY_PATCH_SRC = '/assets/sky_clean_dinhhinh.png?v=2';
 const HEADLINE_BAND_CLEAN_SRC = '/assets/headline_band_clean.png';
 const COVER3_SUB_SKY_SRC = '/assets/cover3_sub_sky.png';
@@ -112,7 +112,17 @@ function drawCleanCoverSubHeadline(
     if (w > 0) {
       ctx.save();
       ctx.globalAlpha = clamp01(0.35 + p4 * 0.65);
-      ctx.drawImage(finalImg, 850 - SUB_PATCH_X, 169, w, SUB_PATCH_H - 169, 850, SUB_PATCH_Y + 169, w, SUB_PATCH_H - 169);
+      ctx.drawImage(
+        finalImg,
+        850 - SUB_PATCH_X,
+        169,
+        w,
+        SUB_PATCH_H - 169,
+        850,
+        SUB_PATCH_Y + 169,
+        w,
+        SUB_PATCH_H - 169
+      );
       ctx.restore();
     }
   }
@@ -135,6 +145,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const posterImgRef = useRef<HTMLImageElement | null>(null);
     const skyPatchRef = useRef<HTMLImageElement | null>(null);
     const headlineBandCleanRef = useRef<HTMLImageElement | null>(null);
     const coverSubSkyRef = useRef<HTMLImageElement | null>(null);
@@ -142,37 +153,30 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
     const engineRef = useRef<TrafficEngine | null>(null);
     const networkOverlayRef = useRef<DigitalNetworkOverlay | null>(null);
     const configRef = useRef<TrafficConfig>(config);
+    const paintedOnceRef = useRef(false);
 
-    const [videoReady, setVideoReady] = useState(false);
-    const [assetsReady, setAssetsReady] = useState(false);
-    const [videoError, setVideoError] = useState(false);
+    const [canvasReady, setCanvasReady] = useState(false);
 
     configRef.current = config;
 
     const resolvedVideoSrc = useMemo(() => resolveAssetUrl(VIDEO_SRC), []);
+    const resolvedPosterSrc = useMemo(() => resolveAssetUrl(COVER3_POSTER_SRC), []);
 
-    // Preload clean sky & final sub-headline patches (eliminates dark-blue wipe bars under headline text)
+    // Preload instant cover poster + clean sub-headline patches (never blocks cover visibility)
     useEffect(() => {
-      if (config.mode === 'original') {
-        let subSkyLoaded = false;
-        let subFinalLoaded = false;
-        const checkOriginalReady = () => {
-          if (subSkyLoaded && subFinalLoaded) {
-            setAssetsReady(true);
-          }
-        };
+      const poster = new Image();
+      poster.decoding = 'async';
+      poster.src = resolvedPosterSrc;
+      poster.onload = () => {
+        posterImgRef.current = poster;
+      };
 
+      if (config.mode === 'original') {
         const subSkyImg = new Image();
         subSkyImg.decoding = 'async';
         subSkyImg.src = resolveAssetUrl(COVER3_SUB_SKY_SRC);
         subSkyImg.onload = () => {
           coverSubSkyRef.current = subSkyImg;
-          subSkyLoaded = true;
-          checkOriginalReady();
-        };
-        subSkyImg.onerror = () => {
-          subSkyLoaded = true;
-          checkOriginalReady();
         };
 
         const subFinalImg = new Image();
@@ -180,31 +184,15 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
         subFinalImg.src = resolveAssetUrl(COVER3_SUB_FINAL_SRC);
         subFinalImg.onload = () => {
           coverSubFinalRef.current = subFinalImg;
-          subFinalLoaded = true;
-          checkOriginalReady();
-        };
-        subFinalImg.onerror = () => {
-          subFinalLoaded = true;
-          checkOriginalReady();
         };
         return;
       }
-
-      let skyLoaded = false;
-      let bandLoaded = false;
-      const checkReady = () => {
-        if (skyLoaded && bandLoaded) {
-          setAssetsReady(true);
-        }
-      };
 
       const skyImg = new Image();
       skyImg.decoding = 'async';
       skyImg.src = resolveAssetUrl(SKY_PATCH_SRC);
       skyImg.onload = () => {
         skyPatchRef.current = skyImg;
-        skyLoaded = true;
-        checkReady();
       };
 
       const bandImg = new Image();
@@ -212,25 +200,53 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
       bandImg.src = resolveAssetUrl(HEADLINE_BAND_CLEAN_SRC);
       bandImg.onload = () => {
         headlineBandCleanRef.current = bandImg;
-        bandLoaded = true;
-        checkReady();
       };
-    }, [config.mode]);
+    }, [config.mode, resolvedPosterSrc]);
 
-    // Sync video playback with play/pause state
+    // Harden mobile iOS Safari / Zalo WebView autoplay + gesture resume
     useEffect(() => {
       const video = videoRef.current;
       if (!video) return;
+
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', 'true');
+
+      const tryPlay = () => {
+        if (configRef.current.paused) return;
+        video.play().catch(() => {
+          // Poster + live DigitalNetworkOverlay remain active until autoplay/gesture succeeds
+        });
+      };
+
       if (config.paused) {
         video.pause();
       } else {
-        video.play().catch(() => {
-          // Autoplay might wait for first gesture in strict browsers
-        });
+        tryPlay();
       }
+
+      const onVisibility = () => {
+        if (!document.hidden) tryPlay();
+      };
+      const onFirstGesture = () => {
+        tryPlay();
+      };
+
+      document.addEventListener('visibilitychange', onVisibility);
+      window.addEventListener('touchstart', onFirstGesture, { passive: true, once: true });
+      window.addEventListener('pointerdown', onFirstGesture, { passive: true, once: true });
+
+      return () => {
+        document.removeEventListener('visibilitychange', onVisibility);
+        window.removeEventListener('touchstart', onFirstGesture);
+        window.removeEventListener('pointerdown', onFirstGesture);
+      };
     }, [config.paused]);
 
-    // Main 60fps 1920x1300 animation loop
+    // Main 60fps 1920x1300 animation loop (instant poster + live light-line fallback when video is loading or paused by Low Power Mode)
     useEffect(() => {
       if (!engineRef.current) {
         engineRef.current = new TrafficEngine();
@@ -254,26 +270,48 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
         const engine = engineRef.current!;
         const networkOverlay = networkOverlayRef.current!;
         const video = videoRef.current;
-        engine.update(dt, configRef.current, video ? video.currentTime : undefined);
-        engine.render(ctx, null, video, configRef.current, {
-          skyPatch: skyPatchRef.current,
-          headlineBandClean: headlineBandCleanRef.current,
-        });
+        const posterImg = posterImgRef.current;
 
-        // Cleanly suppress the dark-blue wipe bars running under the cover headline text
-        if (video && video.readyState >= 2 && configRef.current.mode === 'original') {
-          drawCleanCoverSubHeadline(
-            ctx,
-            video.currentTime,
-            coverSubSkyRef.current,
-            coverSubFinalRef.current
-          );
+        // Only switch from crisp poster to live video once video has decoded frames AND is actually playing
+        // (avoids showing blank Frame 0 sky without text when iOS Low Power Mode blocks autoplay)
+        const useLiveVideo = Boolean(
+          video &&
+            video.readyState >= 2 &&
+            video.videoWidth > 0 &&
+            (!video.paused || video.currentTime > 1.1)
+        );
+
+        let drewFrame = false;
+
+        if (useLiveVideo && video) {
+          engine.update(dt, configRef.current, video.currentTime);
+          engine.render(ctx, null, video, configRef.current, {
+            skyPatch: skyPatchRef.current,
+            headlineBandClean: headlineBandCleanRef.current,
+          });
+
+          if (configRef.current.mode === 'original') {
+            drawCleanCoverSubHeadline(
+              ctx,
+              video.currentTime,
+              coverSubSkyRef.current,
+              coverSubFinalRef.current
+            );
+          }
+          drewFrame = true;
+        } else if (posterImg && posterImg.complete && posterImg.naturalWidth > 0) {
+          ctx.drawImage(posterImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+          drewFrame = true;
         }
 
-        // Render cyan, electric blue & gold digital infrastructure light network radiating from city center
-        if (video && video.readyState >= 2) {
+        if (drewFrame) {
           networkOverlay.update(dt, configRef.current.paused);
           networkOverlay.render(ctx);
+
+          if (!paintedOnceRef.current) {
+            paintedOnceRef.current = true;
+            setCanvasReady(true);
+          }
         }
 
         rafId = requestAnimationFrame(tick);
@@ -389,23 +427,34 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
           isFullscreenView ? 'h-full' : ''
         }`}
       >
-        {/* Native 1920x1300 video source composited cleanly onto canvas */}
+        {/* Instant first-paint 1920x1300 cover poster so mobile & slow networks NEVER show a loading screen */}
+        <img
+          src={resolvedPosterSrc}
+          alt=""
+          loading="eager"
+          decoding="sync"
+          fetchPriority="high"
+          className="absolute inset-0 block w-full h-full object-cover object-[6%_center] md:object-[16%_center] lg:object-center pointer-events-none"
+          aria-hidden="true"
+        />
+
+        {/* Full-box near-zero opacity video prevents iOS Safari / Zalo WebView from throttling sr-only off-screen media */}
         <video
           ref={videoRef}
           src={resolvedVideoSrc}
+          poster={resolvedPosterSrc}
           autoPlay
           loop
           muted
           playsInline
           preload="auto"
           onLoadedData={() => {
-            setVideoReady(true);
-            setVideoError(false);
             engineRef.current?.resetHeadline();
-            networkOverlayRef.current?.reset();
+            if (!configRef.current.paused) {
+              videoRef.current?.play().catch(() => {});
+            }
           }}
-          onError={() => setVideoError(true)}
-          className="sr-only"
+          className="absolute inset-0 w-full h-full object-cover opacity-[0.001] pointer-events-none"
           aria-hidden="true"
         />
 
@@ -414,21 +463,11 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
           ref={canvasRef}
           width={CANVAS_WIDTH}
           height={CANVAS_HEIGHT}
-          className="block w-full h-full object-cover object-[6%_center] md:object-[16%_center] lg:object-center"
+          className={`relative z-10 block w-full h-full object-cover object-[6%_center] md:object-[16%_center] lg:object-center transition-opacity duration-200 ${
+            canvasReady ? 'opacity-100' : 'opacity-0'
+          }`}
           aria-label="Bìa website Quy hoạch tổng thể TP.HCM giai đoạn 2025-2050 kích thước 1920 nhân 1300 với Landmark 81 và đường sáng mảnh chuyển động qua cầu Sài Gòn"
         />
-
-        {(!videoReady || !assetsReady) && !videoError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#0D5CB6]/95 text-sm text-[#EAF4FF]">
-            Đang tải khung hình 1920 × 1300…
-          </div>
-        )}
-
-        {videoError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#0D5CB6] text-sm text-[#EAF4FF] px-6 text-center">
-            Không thể tải tệp video nguồn. Vui lòng kiểm tra lại kết nối và tải lại trang.
-          </div>
-        )}
       </div>
     );
   }

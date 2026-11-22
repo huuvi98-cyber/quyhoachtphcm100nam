@@ -5,15 +5,15 @@ import { TrafficCoverStage } from './components/TrafficCoverStage';
 import { TrafficConfig } from './lib/trafficEngine';
 
 const COVER_CONFIG: TrafficConfig = {
-  mode: 'lines',
-  headlineMode: 'static',
+  mode: 'original',
+  headlineMode: 'hidden',
   speed: 1.1,
   density: 1.15,
-  trailIntensity: 0.92,
+  trailIntensity: 0,
   lineThinness: 1.0,
-  showMetro: true,
-  showFrontage: true,
-  showAiLines: true,
+  showMetro: false,
+  showFrontage: false,
+  showAiLines: false,
   paused: false,
 };
 

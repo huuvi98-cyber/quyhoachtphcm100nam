@@ -483,12 +483,32 @@ export function HcmcMasterPlanReport() {
       const yLbl = byId("grdpYearLabel");
       const gVal = byId<CountUpElement>("grdpGrowthVal");
       const tVal = byId<CountUpElement>("grdpTotalVal");
+      const tCard = byId("grdpTotalCard");
+      const pCard = byId("grdpPerCapitaCard");
+      const pLbl = byId("grdpPerCapitaLabel");
       const pVal = byId<CountUpElement>("grdpPerCapitaVal");
 
       if (yLbl) yLbl.innerText = "Năm " + s.year;
       if (gVal) {
         gVal.dataset.countTarget = s.growth;
         animateCountUpElement(gVal, s.growth, 700);
+      }
+      if (s.total) {
+        tCard?.classList.remove("hidden");
+        pCard?.classList.remove("sm:col-span-2");
+        if (pLbl) pLbl.textContent = "Đầu người (Tối thiểu)";
+        if (pVal) {
+          pVal.classList.remove("sm:text-4xl");
+          pVal.classList.add("sm:text-3xl");
+        }
+      } else {
+        tCard?.classList.add("hidden");
+        pCard?.classList.add("sm:col-span-2");
+        if (pLbl) pLbl.textContent = "GRDP bình quân đầu người đạt tối thiểu";
+        if (pVal) {
+          pVal.classList.remove("sm:text-3xl");
+          pVal.classList.add("sm:text-4xl");
+        }
       }
       if (tVal) {
         tVal.dataset.countTarget = s.total;
@@ -978,7 +998,7 @@ export function HcmcMasterPlanReport() {
               <div className="text-sm font-extrabold text-slate-700 mt-1">km²</div>
             </div>
             <div className="p-6 rounded-2xl bg-icegray border border-slate-200">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Tổng số đơn vị</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">TỔNG SỐ</span>
               <div className="text-4xl sm:text-5xl font-black font-display text-energy huge-num tabular-nums mt-2" data-countup>168</div>
               <div className="text-sm font-extrabold text-slate-700 mt-1">Đơn vị hành chính</div>
             </div>
@@ -1302,17 +1322,17 @@ export function HcmcMasterPlanReport() {
                 <div className="text-sm font-black uppercase tracking-wider text-slate-500">Chỉ số kinh tế trọng điểm <span className="text-cobalt font-display text-base ml-1 font-black" id="grdpYearLabel">Năm 2075+</span></div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm flex flex-col justify-center">
                   <span className="text-xs font-bold text-slate-500 uppercase">Tăng trưởng GRDP</span>
-                  <div className="text-3xl sm:text-4xl font-black font-display text-cobalt tabular-nums mt-1" id="grdpGrowthVal" data-countup>≥ 6%/năm</div>
+                  <div className="text-2xl sm:text-3xl font-black font-display text-cobalt tabular-nums leading-tight mt-2" id="grdpGrowthVal" data-countup>≥ 6%/năm</div>
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
+                <div className="hidden p-4 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm flex flex-col justify-center" id="grdpTotalCard">
                   <span className="text-xs font-bold text-slate-500 uppercase">Quy mô GRDP</span>
-                  <div className="text-3xl sm:text-4xl font-black font-display text-ice tabular-nums mt-1" id="grdpTotalVal" data-countup></div>
+                  <div className="text-2xl sm:text-3xl font-black font-display text-ice tabular-nums leading-tight mt-2" id="grdpTotalVal" data-countup></div>
                 </div>
-                <div className="p-4 rounded-2xl bg-orange-50 border-2 border-sun shadow-sm">
-                  <span className="text-xs font-bold text-orange-700 uppercase">Đầu người (Tối thiểu)</span>
-                  <div className="text-4xl sm:text-5xl font-black font-display text-energy tabular-nums mt-1" id="grdpPerCapitaVal" data-countup>100.000 USD</div>
+                <div className="sm:col-span-2 p-4 rounded-2xl bg-orange-50 border-2 border-sun shadow-sm flex flex-col justify-center" id="grdpPerCapitaCard">
+                  <span className="text-xs font-bold text-orange-700 uppercase" id="grdpPerCapitaLabel">GRDP bình quân đầu người đạt tối thiểu</span>
+                  <div className="text-3xl sm:text-4xl font-black font-display text-energy tabular-nums leading-tight mt-2" id="grdpPerCapitaVal" data-countup>100.000 USD</div>
                 </div>
               </div>
               <div className="h-60 sm:h-64 w-full bg-slate-50/50 p-2 rounded-2xl border border-slate-100">

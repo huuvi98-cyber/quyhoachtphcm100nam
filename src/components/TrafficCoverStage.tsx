@@ -8,7 +8,7 @@ import {
 } from '../lib/trafficEngine';
 
 const VIDEO_SRC =
-  '/assets/aistudio/Quy_ho_ch_t_ng_th__TPHCM_th_i_k__2025-2050__t_m_nh_n_100_n_m__2__91fa1a70.mp4';
+  '/assets/aistudio/Quy_ho_ch_t_ng_th__TPHCM_th_i_k__2025-2050__t_m_nh_n_100_n_m__3__29f4ee55.mp4';
 const SKY_PATCH_SRC = '/assets/sky_clean_dinhhinh.png?v=2';
 const HEADLINE_BAND_CLEAN_SRC = '/assets/headline_band_clean.png';
 
@@ -35,15 +35,20 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
     const configRef = useRef<TrafficConfig>(config);
 
     const [videoReady, setVideoReady] = useState(false);
-    const [assetsReady, setAssetsReady] = useState(false);
+    const [assetsReady, setAssetsReady] = useState(config.mode === 'original');
     const [videoError, setVideoError] = useState(false);
 
     configRef.current = config;
 
     const resolvedVideoSrc = useMemo(() => resolveAssetUrl(VIDEO_SRC), []);
 
-    // Preload exact clean sky patch & clean horizontal headline band for static vector DINH HINH & gliding lime bar
+    // Preload sky patch & clean headline band only if overlay mode is active
     useEffect(() => {
+      if (config.mode === 'original') {
+        setAssetsReady(true);
+        return;
+      }
+
       let skyLoaded = false;
       let bandLoaded = false;
       const checkReady = () => {
@@ -69,7 +74,7 @@ export const TrafficCoverStage = forwardRef<TrafficCoverStageHandle, TrafficCove
         bandLoaded = true;
         checkReady();
       };
-    }, []);
+    }, [config.mode]);
 
     // Sync video playback with play/pause state
     useEffect(() => {

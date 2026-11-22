@@ -31,7 +31,7 @@ export default function App() {
         >
           <SkylinePillarsIcon className="w-[230px] sm:w-[270px] md:w-[320px] h-auto mb-5 md:mb-6" />
 
-          <p className="text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] leading-[1.72] font-medium text-[#F4F8FF] tracking-[-0.005em] text-pretty">
+          <p className="text-[14.4px] sm:text-[16.2px] md:text-[18px] lg:text-[19.8px] leading-[1.72] font-medium text-[#F4F8FF] tracking-[-0.005em] text-pretty">
             UBND TPHCM vừa ban hành Quyết định số 7308/QĐ-UBND ngày 31-10-2026 phê duyệt quy hoạch tổng thể TPHCM thời kỳ 2025-2050, tầm nhìn 100 năm. Quy hoạch mang tính bước ngoặt chiến lược, định hình tương lai phát triển của siêu đô thị lớn nhất cả nước trong kỷ nguyên mới.
           </p>
         </section>
